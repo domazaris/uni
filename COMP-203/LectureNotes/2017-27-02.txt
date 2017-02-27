@@ -1,0 +1,14 @@
+Course outline:
+* Java
+* Dynamic Data structures
+* Monday & Friday Lectures
+* 4 Programming assignments (not large) - implementing abstract data types - 15% each
+* 2 Tests - 20% each [ teaching break, last day( June 2nd ) ]
+* COMP203 & COMP241
+* Tutorial wont be compulsory ever - only supplementary but start wk2
+
+Notes:
+* Turing Problem
+* Halting Problem
+* Decidable vs undecidable 
+
