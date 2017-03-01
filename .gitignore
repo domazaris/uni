@@ -1,2 +1,10 @@
+### Projects
 .vscode
+
+### Java
 *.class
+
+### C#
+project.lock.json
+bin/
+obj/
