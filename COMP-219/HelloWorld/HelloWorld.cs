@@ -1,8 +1,12 @@
-// Hello1.cs
-public class Hello1
+﻿using System;
+
+namespace ConsoleApplication
 {
-   public static void Main()
-   {
-      System.Console.WriteLine("Hello, World!");
-   }
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            Console.WriteLine("Hello World!");
+        }
+    }
 }
