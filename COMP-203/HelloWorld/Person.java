@@ -1,17 +1,19 @@
+import java.util.UUID;
+
 public class Person {
     String _name;
-    int _age;
+    UUID _id;
 
-    public Person( String name, int age ) {
+    public Person( String name ) {
         _name = name;
-        _age = age;
-    }
-
-    public int getAge() {
-        return _age;
+        _id = UUID.randomUUID();
     }
 
     public String getName() {
         return _name;
+    }
+
+    public UUID getID() {
+        return _id;
     }
 }

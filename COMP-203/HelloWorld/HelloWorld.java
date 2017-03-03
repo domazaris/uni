@@ -1,8 +1,22 @@
 public class HelloWorld {
     public static void main(String[] args) {
-        // Prints "Hello, World" to the terminal window.
-        Person dom = new Person( "Dom", 20 );
-        System.out.println("Hello, World.");
-        System.out.println("My name is " + dom.getName());
+        // Create an array of people
+        people = new Person[ args.length ];
+        for( int i = 0; i < args.length; i++) {
+            people[i] = new Person( args[i] );
+        }
+        
+        // Print each persons name
+        if( people.length > 0 ){
+            System.out.println("ID\t\t\t\t\tName");
+            System.out.println("");
+            for( int i = 0; i < people.length; i++) {
+                System.out.println(people[i].getID() + "\t" + people[i].getName());
+            }
+        } else {
+            System.out.println("Hello, World.");
+        }
     }
+
+    static Person [] people;
 }
