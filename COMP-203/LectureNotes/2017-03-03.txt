@@ -1,0 +1,3 @@
+* classes are PascalCase
+* functions and vars are camelCase
+* main methods always `main( String [] args )`
