@@ -1,0 +1,12 @@
+# write java program that reads a file one word at time - will be part of assignment one
+* "reader" takes a byte stream and converts to chars - treats input as lines of chars
+* reader methods: getline[ gets str from input ], 
+* "BufferedReader" reads ahead
+* "BufferedWriter" 
+* "scanner" like a reader, but parses data in different ways ( i.e. getNextInt, getNextFloat,  etc.) and is slower - 1KB at a time
+* dont read too much with a scanner
+* open file in file object, then wrap file object in scanner object `Scanner sc = new Scanner( new File(args[0]));`
+* file and scanner not in base java lib - import with `import java.io.File;`, `import java.util.Scanner;`
+* Scanner.hasNext returns true if there is something to read 
+* Scanner.next returns the next token from the scanner/file as a string
+* Scanners default token is whitespace
