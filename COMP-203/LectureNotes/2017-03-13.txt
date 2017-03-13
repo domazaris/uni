@@ -1,0 +1,5 @@
+* set - unordered collection of objects/elements
+* check if a set has an element, if the set is empty, take the intersection/union of two sets
+* Integers
+* IntSet methods - add, isEmpty, remove, hasElement, intersection, union 
+* sets dont contain duplicates 
