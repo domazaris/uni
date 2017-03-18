@@ -1,9 +1,11 @@
-public class Node< T extends Comparable<T> >
+public class Node< T >
 {
     // Constructor
     public Node( T data )
     {
         node_data = data;
+        next = null;
+        previous = null;
     }
 
     public T getData()

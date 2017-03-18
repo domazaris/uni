@@ -2,18 +2,17 @@ public class MTFencoder
 {
     public static void main( String [] args )
     {
-        LinkedList< String > list = new LinkedList<String>();
-
-        for( int i = 0; i < 10; i++ )
-        {
-            list.insert( Integer.toString(i) );
-        }
-
-        for( int i = 0; i < 10; i++ )
-        {
-            System.out.println( list.at(i) );
-        }
-
+        WordList list = new WordList();
+        int val = 0;
+        val = list.insert( "the" );
+        System.out.println( val + " " + list.at( val ) );
+        val = list.insert( "car" );
+        System.out.println( val + " " + list.at( val ) );
+        val = list.insert( "on" );
+        System.out.println( val + " " + list.at( val ) );
+        val = list.insert( "the" );
+        System.out.println( val + " " + list.at( val ) );
+        list.printList();
         return;
     }
 }
