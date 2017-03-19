@@ -2,6 +2,7 @@ public class WordList
 {
     // Members
     private Node< String > head;
+    public int size = 0;
 
     public WordList()
     {
@@ -12,7 +13,8 @@ public class WordList
     {
         if( head == null )
         {
-            head = new Node< String >(data);
+            size++;
+            head = new Node< String >( data );
             return 0;
         }
 
@@ -25,6 +27,7 @@ public class WordList
 
         // If not, insert it to the head
         Node< String > node = new Node< String >( data );
+        size++;
         insertFront( node );
         return 0;
     }
@@ -59,17 +62,28 @@ public class WordList
             // Go to next item
             if( current.getData().compareTo( data ) == 0 )
             {
-                // Remove the node from the middle
-                pop( current );
+                if( counter > 1 )
+                {
+                    // Remove the node from the middle
+                    pop( current );
 
-                // Insert into the front
-                insertFront( current );
+                    // Insert into the front
+                    insertFront( current );
+                }
 
                 // Return counter as it was found in this location
                 return counter;
             }
+            
             current = current.next;
             counter++;
+        }
+
+        if( counter != size + 1 )
+        {
+            // Debug
+            System.err.println( "Counter: " + counter + ", Size: " + size);
+            System.exit(1);
         }
 
         // Return 0 as the item was not found
@@ -79,15 +93,19 @@ public class WordList
     private void insertFront( Node< String > new_head ) 
     {
         // Check if already at front
-        if( new_head == head )
+        if( new_head.getData().compareTo(head.getData()) == 0 )
+        {
             return;
+        }
 
         // Point the current head to the new head
+        new_head.next = head;
         if( head != null )
+        {
             head.previous = new_head;
+        }
 
         // Insert to the head
-        new_head.next = head;
         head = new_head;
     }
 }

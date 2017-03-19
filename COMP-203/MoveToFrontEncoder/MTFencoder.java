@@ -17,7 +17,7 @@ public class MTFencoder
             while( ( line = reader.readLine() ) != null )
             {
                 // Split the line into words
-                String [] words = line.split("(?=\\.)|(?=-)|(?='s)|(?=,)|(?=\n)|(?=!)|(?=\")| ");
+                String [] words = line.split("(?=\\.)|(?=\\-)|(?='s)|(?=,)|(?=\n)|(?=!)|(?=\")| ");
                 
                 // Insert each token into the dictionary
                 for( int i = 0; i < words.length; i++ )
@@ -34,7 +34,7 @@ public class MTFencoder
                 }
             }
         }
-        catch( Exception e ){}
+        catch( Exception e ){ System.err.println(e); }
     }
 
     public static void main( String [] args )
