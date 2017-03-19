@@ -29,6 +29,23 @@ public class WordList
         return 0;
     }
 
+    public void pop( Node< String > node )
+    {
+        // Move connect the next and previous node
+        if( node.previous != null )
+        {
+            node.previous.next = node.next;
+        }
+        if( node.next != null )
+        {
+            node.next.previous = node.previous;
+        }
+
+        // reset the node refs
+        node.previous = null;
+        node.next = null;
+    }
+
     // Moves the node with matching data to the front. Returns the previous location
     private int moveToFront( String data )
     {
@@ -42,22 +59,13 @@ public class WordList
             // Go to next item
             if( current.getData().compareTo( data ) == 0 )
             {
-                // Move connect the next and previous node
-                if( current.previous != null )
-                {
-                    current.previous.next = current.next;
-                }
-                if( current.next != null )
-                {
-                    current.next.previous = current.previous;
-                }
-                current.previous = null;
-                current.next = null;
+                // Remove the node from the middle
+                pop( current );
 
                 // Insert into the front
                 insertFront( current );
 
-                // Return counter as it was found and moved
+                // Return counter as it was found in this location
                 return counter;
             }
             current = current.next;
