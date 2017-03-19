@@ -18,7 +18,7 @@ public class WordList
 
         // Check if it is in the array
         int location = moveToFront( data );
-        if( location >= 0 )
+        if( location > 0 )
         {
             return location;
         }
@@ -29,22 +29,6 @@ public class WordList
         return 0;
     }
 
-    // indexing
-    public String at( int index )
-    {
-        Node< String > current = head;
-        int counter = 0;
-        while( current != null )
-        {
-            if( counter++ == index )
-                return current.getData();
-
-            // Go to next node
-            current = current.next;
-        }
-        return null;
-    }
-
     // Moves the node with matching data to the front. Returns the previous location
     private int moveToFront( String data )
     {
@@ -52,18 +36,23 @@ public class WordList
         Node< String > current = head;
 
         // Traverse the list
-        int counter = 0;
+        int counter = 1;
         while( current != null )
         {
             // Go to next item
             if( current.getData().compareTo( data ) == 0 )
             {
-                // MTF
                 // Move connect the next and previous node
                 if( current.previous != null )
+                {
                     current.previous.next = current.next;
+                }
                 if( current.next != null )
+                {
                     current.next.previous = current.previous;
+                }
+                current.previous = null;
+                current.next = null;
 
                 // Insert into the front
                 insertFront( current );
@@ -75,18 +64,22 @@ public class WordList
             counter++;
         }
 
-        // Return -1 as the item was not found
-        return -1;
+        // Return 0 as the item was not found
+        return 0;
     }
 
     private void insertFront( Node< String > new_head ) 
     {
+        // Check if already at front
+        if( new_head == head )
+            return;
+
         // Point the current head to the new head
         if( head != null )
             head.previous = new_head;
-        new_head.next = head;
 
         // Insert to the head
+        new_head.next = head;
         head = new_head;
     }
 }
