@@ -17,19 +17,21 @@ public class MTFencoder
             while( ( line = reader.readLine() ) != null )
             {
                 // Split the line into words
-                String [] words = line.split("(?=\\.)|(?=\\-)|(?='s)|(?=,)|(?=\n)|(?=!)|(?=\")| ");
+                String [] words = line.split("(?=\\.)|(?=\\-)|(?<=\\-)|(?=\\?)|(?<=\\?)|(?='s)|(?=,)|(?=\n)|(?=!)|(?=\")|(?<= )|(?= )");
                 
                 // Insert each token into the dictionary
                 for( int i = 0; i < words.length; i++ )
                 {
-                    int location = dict.insert( words[i] );
+                    // Check for spaces
+                    String word = words[i];
+                    int location = dict.insert( word );
                     if( location <= 0 )
                     {
-                        System.out.println( "0 " + words[i] );
+                        System.out.println( "0 " + word );
                     }
                     else
                     {
-                        System.out.println( location );
+                        System.out.println( location + " " + word);
                     }
                 }
             }

@@ -49,6 +49,20 @@ public class WordList
         node.next = null;
     }
 
+    public String at( int index )
+    {
+        Node< String > current = head;
+        int counter = 1;
+        while( counter++ <= index )
+        {
+            if( current != null )
+                current = current.next;
+            else
+                return null;
+        }
+        return current.getData();
+    }
+
     // Moves the node with matching data to the front. Returns the previous location
     private int moveToFront( String data )
     {
