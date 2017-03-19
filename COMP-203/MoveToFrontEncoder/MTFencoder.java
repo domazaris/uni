@@ -11,14 +11,16 @@ public class MTFencoder
         // Read the file
         try
         {
+            // Open up a line at a time
             String line;
-            BufferedReader reader = new BufferedReader( new FileReader( filename ) );
+            BufferedReader reader = new BufferedReader( new FileReader( filename ), 1024*1024 );
             while( ( line = reader.readLine() ) != null )
             {
-                //System.out.println(line);
-                String [] words = line.split("(?=\\.)|(?=,)|(?=\n)|(?=!)| ");
+                // Split the line into words
+                String [] words = line.split("(?=\\.)|(?=-)|(?='s)|(?=,)|(?=\n)|(?=!)|(?=\")| ");
                 
-                for( int i = 0; i < words.length; i++  )
+                // Insert each token into the dictionary
+                for( int i = 0; i < words.length; i++ )
                 {
                     int location = dict.insert( words[i] );
                     if( location <= 0 )
