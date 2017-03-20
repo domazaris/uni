@@ -21,25 +21,34 @@ public class MTFencoder
             {
                 // Split the line into words
                 // String [] words = line.split("(?=\\.)|(?=\\?)|(?<='s)|(?=,)|(?=!)|(?=\")|(?<=\\ )|(?=\\ )");
-                String [] words = line.split("(?=\\.)|(?=\\?)|(?=,)|(?=!)|(?<=\\ )|(?=\\ )");
+                String [] words = line.split("((?<=\\s+)|(?=\\s+))");
 
                 // Insert each token into the dictionary
                 for( int i = 0; i < words.length; i++ )
                 {
                     // Check for spaces
                     String word = words[i];
+                    if( word.compareTo( " " ) == 0 )
+                    {
+                        System.out.println( "s" );
+                        continue;
+                    }
+
+                    // Insert the word
                     int location = dict.insert( word );
                     if( location <= 0 )
                     {
+                        // New word
                         System.out.println( "0 " + word );
                     }
                     else
                     {
+                        // Word already in dictionary
                         System.out.println( location );
                     }
                 }
 
-                // Print a newline for each line
+                // Print a newline
                 System.out.println();
             }
         }

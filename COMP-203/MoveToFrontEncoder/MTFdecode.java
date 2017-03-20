@@ -30,6 +30,12 @@ public class MTFdecode
                         continue;
                     }
 
+                    // Check for space
+                    if( words[0].compareTo( "s" ) == 0 )
+                    {
+                        System.out.print(" ");
+                    }
+
                     // The word is in the dictionary already
                     int index = Integer.parseInt( words[0] );
                     String word = dict.at( index );
