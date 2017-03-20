@@ -1,5 +1,7 @@
 import java.io.FileReader;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class MTFdecode
 {
@@ -18,20 +20,31 @@ public class MTFdecode
             {
                 // Split the line into words
                 String [] words = line.split(" ",2);
+
                 if( words.length == 1 )
                 {
+                    // Check for newline
+                    if( words[0].compareTo( "" ) == 0 )
+                    {
+                        System.out.println();
+                        continue;
+                    }
+
                     // The word is in the dictionary already
                     int index = Integer.parseInt( words[0] );
-                    System.out.print( dict.at( index ) );
+                    String word = dict.at( index );
+                    System.out.print( word );
                 }
                 else if( words.length > 1 )
                 {
+                    // Add the word to the dictionary
+                    System.out.print(words[1]);
                     dict.insert( words[1] );
-                    System.out.print( words[1] );
                 }
             }
         }
-        catch( Exception e ){ System.err.println(e); }
+        catch( FileNotFoundException e ){}
+        catch( IOException e ){}
     }
 
     public static void main( String [] args )

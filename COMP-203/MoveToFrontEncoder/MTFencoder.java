@@ -1,5 +1,7 @@
 import java.io.FileReader;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class MTFencoder
 {
@@ -14,11 +16,13 @@ public class MTFencoder
             // Open up a line at a time
             String line;
             BufferedReader reader = new BufferedReader( new FileReader( filename ), 1024*1024 );
+            int counter = 0;
             while( ( line = reader.readLine() ) != null )
             {
                 // Split the line into words
-                String [] words = line.split("(?=\\.)|(?=\\-)|(?<=\\-)|(?=\\?)|(?<=\\?)|(?='s)|(?=,)|(?=\n)|(?=!)|(?=\")|(?<= )|(?= )");
-                
+                // String [] words = line.split("(?=\\.)|(?=\\?)|(?<='s)|(?=,)|(?=!)|(?=\")|(?<=\\ )|(?=\\ )");
+                String [] words = line.split("(?=\\.)|(?=\\?)|(?=,)|(?=!)|(?<=\\ )|(?=\\ )");
+
                 // Insert each token into the dictionary
                 for( int i = 0; i < words.length; i++ )
                 {
@@ -31,12 +35,16 @@ public class MTFencoder
                     }
                     else
                     {
-                        System.out.println( location + " " + word);
+                        System.out.println( location );
                     }
                 }
+
+                // Print a newline for each line
+                System.out.println();
             }
         }
-        catch( Exception e ){ System.err.println(e); }
+        catch( FileNotFoundException e ){}
+        catch( IOException e ){}
     }
 
     public static void main( String [] args )

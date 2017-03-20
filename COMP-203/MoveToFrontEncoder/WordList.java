@@ -1,8 +1,9 @@
 public class WordList
 {
-    // Members
+    // --------- Members --------- \\
     private Node< String > head;
-    public int size = 0;
+
+    // -------- Interface -------- \\
 
     public WordList()
     {
@@ -13,23 +14,30 @@ public class WordList
     {
         if( head == null )
         {
-            size++;
             head = new Node< String >( data );
             return 0;
         }
 
         // Check if it is in the array
-        int location = moveToFront( data );
-        if( location > 0 )
+        int location = getIndex( data );
+
+        // If the node doesn't exist
+        if( location == 0 )
         {
+            // Create a new one & insert it
+            Node< String > node = new Node< String >( data );
+            insertFront( node );
+            return 0;
+        }
+        else
+        {
+            // Move to front
+            Node< String > node = getNodeAt( location );
+            moveToFront( node );
+
+            // Return the location
             return location;
         }
-
-        // If not, insert it to the head
-        Node< String > node = new Node< String >( data );
-        size++;
-        insertFront( node );
-        return 0;
     }
 
     public void pop( Node< String > node )
@@ -51,63 +59,72 @@ public class WordList
 
     public String at( int index )
     {
-        Node< String > current = head;
-        int counter = 1;
-        while( counter++ <= index )
-        {
-            if( current != null )
-                current = current.next;
-            else
-                return null;
-        }
-        return current.getData();
+        // Get the node at the index
+        Node< String > node = getNodeAt( index );
+        
+        // Move the node to the front
+        moveToFront( node );
+
+        // Return the data
+        return node.getData();
     }
 
-    // Moves the node with matching data to the front. Returns the previous location
-    private int moveToFront( String data )
-    {
-        // Set up current as the front node
-        Node< String > current = head;
+    // --------- Private --------- \\
 
-        // Traverse the list
+    private Node< String > getNodeAt( int index )
+    {
+        // Set the node to the head
+        Node< String > current = head;
+        
+        // Iterate the list
+        for(int i = 1; i < index; i++ )
+        {
+            if( current.next == null )
+                break;
+            current = current.next;
+        }
+        return current;
+    }
+
+    private int getIndex( String data )
+    {
+        // Set the node to the head
+        Node< String > current = head;
+        
+        // Iterate through each node
         int counter = 1;
+        Boolean found = false;
         while( current != null )
         {
-            // Go to next item
-            if( current.getData().compareTo( data ) == 0 )
+            // Check if the data matches
+            if( data.compareTo( current.getData() ) == 0 )
             {
-                if( counter > 1 )
-                {
-                    // Remove the node from the middle
-                    pop( current );
-
-                    // Insert into the front
-                    insertFront( current );
-                }
-
-                // Return counter as it was found in this location
-                return counter;
+                found = true;
+                break;
             }
-            
+
+            // Go to next node
             current = current.next;
             counter++;
         }
+        if( found )
+            return counter;
+        else
+            return 0;
+    }
 
-        if( counter != size + 1 )
-        {
-            // Debug
-            System.err.println( "Counter: " + counter + ", Size: " + size);
-            System.exit(1);
-        }
-
-        // Return 0 as the item was not found
+    // Moves the node with matching data to the front. Returns the previous location
+    private int moveToFront( Node< String > node )
+    {
+        pop( node );
+        insertFront( node );
         return 0;
     }
 
     private void insertFront( Node< String > new_head ) 
     {
         // Check if already at front
-        if( new_head.getData().compareTo(head.getData()) == 0 )
+        if( new_head.getData().compareTo( head.getData() ) == 0 )
         {
             return;
         }
