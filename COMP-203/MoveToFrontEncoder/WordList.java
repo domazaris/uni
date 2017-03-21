@@ -20,9 +20,6 @@ public class WordList
             return 0;
         }
 
-        System.out.println("Head: " + head.getData());
-        System.out.println("Next: " + head.next);
-
         // Check if it is in the array
         int location = getIndex( data );
 
@@ -39,7 +36,7 @@ public class WordList
         {
             // Move to front
             Node< String > node = getNodeAt( location );
-            moveToFront( node );
+            insertFront( node );
 
             // Return the location
             return location;
@@ -69,7 +66,7 @@ public class WordList
         Node< String > node = getNodeAt( index );
         
         // Move the node to the front
-        moveToFront( node );
+        insertFront( node );
 
         // Return the data
         return node.getData();
@@ -85,8 +82,8 @@ public class WordList
         // Iterate the list
         for(int i = 1; i < index; i++ )
         {
-            if( current.next == null )
-                break;
+            if( current == null )
+                return null;
             current = current.next;
         }
         return current;
@@ -111,21 +108,6 @@ public class WordList
             current = current.next;
             counter++;
         }
-
-        if( counter !=  (size + 1) )
-        {
-            System.err.println(counter + ", " + (size + 1 )  + ", " + current );
-            System.exit(1);
-        }
-
-        return 0;
-    }
-
-    // Moves the node with matching data to the front. Returns the previous location
-    private int moveToFront( Node< String > node )
-    {
-        pop( node );
-        insertFront( node );
         return 0;
     }
 
@@ -136,6 +118,9 @@ public class WordList
         {
             return;
         }
+
+        // Take the node from the graph
+        pop( new_head );
 
         // Point the current head to the new head
         new_head.next = head;

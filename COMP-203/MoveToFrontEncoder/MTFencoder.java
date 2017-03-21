@@ -1,5 +1,3 @@
-import java.io.FileReader;
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -14,23 +12,29 @@ public class MTFencoder
         try
         {
             // Open up a line at a time
+            // String line;
+            // BufferedReader reader = new BufferedReader( new FileReader( filename ), 1024*1024 );
             String line;
-            BufferedReader reader = new BufferedReader( new FileReader( filename ), 1024*1024 );
-            int counter = 0;
+            LineReader reader = new LineReader( filename );
+
             while( ( line = reader.readLine() ) != null )
             {
                 // Split the line into words
-                // String [] words = line.split("(?=\\.)|(?=\\?)|(?<='s)|(?=,)|(?=!)|(?=\")|((?<=\\s+)|(?=\\s+))");
-                String [] words = line.split("((?<=\\s+)|(?=\\s+)|(?=\\ )|(?<=\\ ))");
+                String [] words = line.split("(?<=[\\p{Punct}\\s]+)|(?=[\\p{Punct}\\s]+)");
 
                 // Insert each token into the dictionary
                 for( int i = 0; i < words.length; i++ )
                 {
                     // Check for spaces
                     String word = words[i];
-                    if( word.compareTo( " " ) == 0 )
+                    if( word.length() == 1 && word.charAt(0) == ' ' )
                     {
                         System.out.println( "s" );
+                        continue;
+                    }
+                    else if( word.length() == 1 && word.charAt(0) == '\n')
+                    {
+                        System.out.println();
                         continue;
                     }
 
@@ -47,9 +51,6 @@ public class MTFencoder
                         System.out.println( location );
                     }
                 }
-
-                // Print a newline
-                System.out.println();
             }
         }
         catch( FileNotFoundException e ){}
