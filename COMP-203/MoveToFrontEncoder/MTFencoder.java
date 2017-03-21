@@ -8,17 +8,16 @@ public class MTFencoder
         // Create the dictionary
         WordList dict = new WordList();
 
-        // Read the file
         try
         {
-            // Open up a line at a time
-            String line;
+            // Open the file
             LineReader reader = new LineReader( filename );
 
+            // Read a line at a time
+            String line;
             while( ( line = reader.readLine() ) != null )
             {
                 // Split the line into words
-                // String [] words = line.split("(?<=\\s+)|(?=\\s+)");
                 String [] words = line.split("(?=\\s+)");
 
                 // Insert each token into the dictionary
@@ -28,16 +27,18 @@ public class MTFencoder
                     String word = words[i];
                     if( word.length() == 1 && word.charAt(0) == ' ' )
                     {
+                        // Print an s for spaces
                         System.out.println( "s" );
                         continue;
                     }
                     else if( word.length() == 1 && word.charAt(0) == '\n')
                     {
+                        // Print a newline for each newline
                         System.out.println();
                         continue;
                     }
 
-                    // Insert the word
+                    // Try to insert the word
                     int location = dict.insert( word );
                     if( location <= 0 )
                     {
@@ -52,8 +53,18 @@ public class MTFencoder
                 }
             }
         }
-        catch( FileNotFoundException e ){}
-        catch( IOException e ){}
+        catch( FileNotFoundException e )
+        { 
+            // File not found
+            System.err.println( e );
+            System.exit(1);
+        }
+        catch( IOException e )
+        { 
+            // Other exception
+            System.err.println( e );
+            System.exit(1);
+        }
     }
 
     public static void main( String [] args )

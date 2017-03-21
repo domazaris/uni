@@ -13,14 +13,18 @@ public class MTFdecode
         // Read the file
         try
         {
-            // Open up a line at a time
+            // Open the file
+            int readahead = 10*1024*1024; // 10MB
+            BufferedReader reader = new BufferedReader( new FileReader( filename ), readahead );
+
+            // Read a line at a time
             String line;
-            BufferedReader reader = new BufferedReader( new FileReader( filename ), 1024*1024 );
             while( ( line = reader.readLine() ) != null )
             {
                 // Split the line into words
                 String [] words = line.split(" ",2);
 
+                // Check if word is in dictionary
                 if( words.length == 1 )
                 {
                     // Check for newline
@@ -40,6 +44,8 @@ public class MTFdecode
                     // The word is in the dictionary already
                     int index = Integer.parseInt( words[0] );
                     String word = dict.at( index );
+
+                    // Print the word
                     System.out.print( word );
                 }
                 else if( words.length > 1 )
@@ -50,8 +56,18 @@ public class MTFdecode
                 }
             }
         }
-        catch( FileNotFoundException e ){}
-        catch( IOException e ){}
+        catch( FileNotFoundException e )
+        { 
+            // File not found
+            System.err.println( e );
+            System.exit(1);
+        }
+        catch( IOException e )
+        { 
+            // Other exception
+            System.err.println( e );
+            System.exit(1);
+        }
     }
 
     public static void main( String [] args )

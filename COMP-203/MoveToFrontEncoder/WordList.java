@@ -2,7 +2,6 @@ public class WordList
 {
     // --------- Members --------- \\
     private Node< String > head;
-    private int size = 0;
 
     // -------- Interface -------- \\
 
@@ -16,7 +15,6 @@ public class WordList
         if( head == null )
         {
             head = new Node< String >( data );
-            size++;
             return 0;
         }
 
@@ -29,7 +27,6 @@ public class WordList
             // Create a new one & insert it
             Node< String > node = new Node< String >( data );
             insertFront( node );
-            size++;
             return 0;
         }
         else

@@ -7,7 +7,10 @@ class LineReader
 {
     public LineReader( String filename ) throws FileNotFoundException, IOException
     {
+        // Read 10MB max at a time
         int readahead = 1024*1024*10;
+
+        // Open the file
         reader = new BufferedReader( new FileReader( filename ), readahead );
     }
 
@@ -16,11 +19,15 @@ class LineReader
         String line = new String();
         int i;
         char c;
+
+        // For each character
         while( (i = reader.read() ) != -1 )
         {
+            // Add the character to the line
             c = (char)i;
             line +=  (char)c;
             
+            // If the character was a newline, return as a full line
             if( c == '\n' )
             {
                 return line;
@@ -28,9 +35,15 @@ class LineReader
         }
 
         if( line.length() == 0 )
+        {
+            // Nothing in the line
             return null;
+        }
         else
+        {
+            // If there were characters read but no newline ( EOF )
             return line;
+        }
     }
 
     private BufferedReader reader;
