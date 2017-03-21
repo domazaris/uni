@@ -7,7 +7,8 @@ class LineReader
 {
     public LineReader( String filename ) throws FileNotFoundException, IOException
     {
-        reader = new BufferedReader( new FileReader( filename ) );
+        int readahead = 1024*1024*10;
+        reader = new BufferedReader( new FileReader( filename ), readahead );
     }
 
     public String readLine() throws IOException

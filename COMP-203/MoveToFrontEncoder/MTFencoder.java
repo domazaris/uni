@@ -12,15 +12,15 @@ public class MTFencoder
         try
         {
             // Open up a line at a time
-            // String line;
-            // BufferedReader reader = new BufferedReader( new FileReader( filename ), 1024*1024 );
             String line;
             LineReader reader = new LineReader( filename );
 
             while( ( line = reader.readLine() ) != null )
             {
                 // Split the line into words
-                String [] words = line.split("(?<=[\\p{Punct}\\s]+)|(?=[\\p{Punct}\\s]+)");
+                // String [] words = line.split("(?<=[\\p{Punct}\\s]+)|(?=[\\p{Punct}\\s]+)");
+                String [] words = line.split("(?<=\\s+)");//|(?=\\s+)|(?<=\\.)|(?=\\.)|(?<=\\,)|(?=\\,)|(?<=\\-)|(?=\\-)");
+                // String [] words = line.split("(?<=\\ )|(?=\\ )");
 
                 // Insert each token into the dictionary
                 for( int i = 0; i < words.length; i++ )
