@@ -34,6 +34,7 @@ public class MTFdecode
                     if( words[0].compareTo( "s" ) == 0 )
                     {
                         System.out.print(" ");
+                        continue;
                     }
 
                     // The word is in the dictionary already

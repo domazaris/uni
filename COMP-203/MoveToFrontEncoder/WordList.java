@@ -2,6 +2,7 @@ public class WordList
 {
     // --------- Members --------- \\
     private Node< String > head;
+    private int size = 0;
 
     // -------- Interface -------- \\
 
@@ -15,8 +16,12 @@ public class WordList
         if( head == null )
         {
             head = new Node< String >( data );
+            size++;
             return 0;
         }
+
+        System.out.println("Head: " + head.getData());
+        System.out.println("Next: " + head.next);
 
         // Check if it is in the array
         int location = getIndex( data );
@@ -27,6 +32,7 @@ public class WordList
             // Create a new one & insert it
             Node< String > node = new Node< String >( data );
             insertFront( node );
+            size++;
             return 0;
         }
         else
@@ -93,24 +99,26 @@ public class WordList
         
         // Iterate through each node
         int counter = 1;
-        Boolean found = false;
         while( current != null )
         {
             // Check if the data matches
             if( data.compareTo( current.getData() ) == 0 )
             {
-                found = true;
-                break;
+                return counter;
             }
 
             // Go to next node
             current = current.next;
             counter++;
         }
-        if( found )
-            return counter;
-        else
-            return 0;
+
+        if( counter !=  (size + 1) )
+        {
+            System.err.println(counter + ", " + (size + 1 )  + ", " + current );
+            System.exit(1);
+        }
+
+        return 0;
     }
 
     // Moves the node with matching data to the front. Returns the previous location
