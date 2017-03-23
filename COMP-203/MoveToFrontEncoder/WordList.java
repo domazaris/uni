@@ -1,6 +1,7 @@
 public class WordList
 {
     // --------- Members --------- \\
+    
     private Node< String > head;
 
     // -------- Interface -------- \\
@@ -19,28 +20,24 @@ public class WordList
         }
 
         // Check if it is in the array
-        int location = getIndex( data );
-
-        // If the node doesn't exist
-        if( location == 0 )
-        {
-            // Create a new one & insert it
-            Node< String > node = new Node< String >( data );
-            insertFront( node );
-            return 0;
-        }
-        else
-        {
-            // Move to front
-            Node< String > node = getNodeAt( location );
-            insertFront( node );
-
-            // Return the location
-            return location;
-        }
+        return insertFront( data );
     }
 
-    public void pop( Node< String > node )
+    public String at( int index )
+    {
+        // Get the node at the index
+        Node< String > node = getNodeAt( index );
+        
+        // Move the node to the front
+        moveToFront( node );
+
+        // Return the data
+        return node.getData();
+    }
+
+    // --------- Private --------- \\
+
+    private void pop( Node< String > node )
     {
         // Move connect the next and previous node
         if( node.previous != null )
@@ -57,20 +54,6 @@ public class WordList
         node.next = null;
     }
 
-    public String at( int index )
-    {
-        // Get the node at the index
-        Node< String > node = getNodeAt( index );
-        
-        // Move the node to the front
-        insertFront( node );
-
-        // Return the data
-        return node.getData();
-    }
-
-    // --------- Private --------- \\
-
     private Node< String > getNodeAt( int index )
     {
         // Set the node to the head
@@ -86,18 +69,18 @@ public class WordList
         return current;
     }
 
-    private int getIndex( String data )
+    private int insertFront( String data ) 
     {
-        // Set the node to the head
+        // Search for the node
         Node< String > current = head;
-        
-        // Iterate through each node
         int counter = 1;
         while( current != null )
         {
             // Check if the data matches
             if( data.equals( current.getData() ) )
             {
+                // pop and mtf
+                moveToFront( current );
                 return counter;
             }
 
@@ -105,10 +88,14 @@ public class WordList
             current = current.next;
             counter++;
         }
+
+        // Not found - insert front
+        Node< String > new_head = new Node< String >( data );
+        moveToFront( new_head );
         return 0;
     }
 
-    private void insertFront( Node< String > new_head ) 
+    private void moveToFront( Node< String > new_head )
     {
         // Check if already at front
         if( new_head.getData().equals( head.getData() ) )
@@ -128,5 +115,6 @@ public class WordList
 
         // Insert to the head
         head = new_head;
+
     }
 }
