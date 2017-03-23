@@ -28,14 +28,14 @@ public class MTFdecode
                 if( words.length == 1 )
                 {
                     // Check for newline
-                    if( words[0].compareTo( "" ) == 0 )
+                    if( words[0].equals( "" ) )
                     {
                         System.out.println();
                         continue;
                     }
 
                     // Check for space
-                    if( words[0].compareTo( "s" ) == 0 )
+                    if( words[0].equals( "s" ) )
                     {
                         System.out.print(" ");
                         continue;

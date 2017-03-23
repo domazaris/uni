@@ -96,7 +96,7 @@ public class WordList
         while( current != null )
         {
             // Check if the data matches
-            if( data.compareTo( current.getData() ) == 0 )
+            if( data.equals( current.getData() ) )
             {
                 return counter;
             }
@@ -111,7 +111,7 @@ public class WordList
     private void insertFront( Node< String > new_head ) 
     {
         // Check if already at front
-        if( new_head.getData().compareTo( head.getData() ) == 0 )
+        if( new_head.getData().equals( head.getData() ) )
         {
             return;
         }
