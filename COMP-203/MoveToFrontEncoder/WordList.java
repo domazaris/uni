@@ -1,8 +1,47 @@
 public class WordList
 {
+    // ----------- Node ---------- \\
+
+    class Node
+    {
+        private String data;
+        private Node next;
+        private Node previous;
+
+        public Node( String word )
+        {
+            data = word;
+        }
+
+        public String getData()
+        {
+            return data;
+        }
+
+        public void setNext( Node n )
+        {
+            next = n;
+        }
+
+        public Node getNext()
+        {
+            return next;
+        }
+
+        public void setPrevious( Node p )
+        {
+            previous = p;
+        }
+
+        public Node getPrevious()
+        {
+            return previous;
+        }
+    }
+
     // --------- Members --------- \\
     
-    private Node< String > head;
+    private Node head;
 
     // -------- Interface -------- \\
 
@@ -15,7 +54,7 @@ public class WordList
     {
         if( head == null )
         {
-            head = new Node< String >( data );
+            head = new Node( data );
             return 0;
         }
 
@@ -26,7 +65,7 @@ public class WordList
     public String at( int index )
     {
         // Get the node at the index
-        Node< String > node = getNodeAt( index );
+        Node node = getNodeAt( index );
         
         // Move the node to the front
         moveToFront( node );
@@ -37,34 +76,34 @@ public class WordList
 
     // --------- Private --------- \\
 
-    private void pop( Node< String > node )
+    private void pop( Node node )
     {
         // Move connect the next and previous node
         if( node.previous != null )
         {
-            node.previous.next = node.next;
+            node.getPrevious().setNext( node.getNext() );
         }
         if( node.next != null )
         {
-            node.next.previous = node.previous;
+            node.getNext().setPrevious( node.getPrevious() );
         }
 
         // reset the node refs
-        node.previous = null;
-        node.next = null;
+        node.setPrevious( null );
+        node.setNext( null );
     }
 
-    private Node< String > getNodeAt( int index )
+    private Node getNodeAt( int index )
     {
         // Set the node to the head
-        Node< String > current = head;
+        Node current = head;
         
         // Iterate the list
         for(int i = 1; i < index; i++ )
         {
             if( current == null )
                 return null;
-            current = current.next;
+            current = current.getNext();
         }
         return current;
     }
@@ -72,7 +111,7 @@ public class WordList
     private int insertFront( String data ) 
     {
         // Search for the node
-        Node< String > current = head;
+        Node current = head;
         int counter = 1;
         while( current != null )
         {
@@ -85,17 +124,17 @@ public class WordList
             }
 
             // Go to next node
-            current = current.next;
+            current = current.getNext();
             counter++;
         }
 
         // Not found - insert front
-        Node< String > new_head = new Node< String >( data );
+        Node new_head = new Node( data );
         moveToFront( new_head );
         return 0;
     }
 
-    private void moveToFront( Node< String > new_head )
+    private void moveToFront( Node new_head )
     {
         // Check if already at front
         if( new_head.getData().equals( head.getData() ) )
@@ -107,10 +146,10 @@ public class WordList
         pop( new_head );
 
         // Point the current head to the new head
-        new_head.next = head;
+        new_head.setNext( head );
         if( head != null )
         {
-            head.previous = new_head;
+            head.setPrevious( new_head );
         }
 
         // Insert to the head
