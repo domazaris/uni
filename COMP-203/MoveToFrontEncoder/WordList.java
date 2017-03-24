@@ -115,6 +115,5 @@ public class WordList
 
         // Insert to the head
         head = new_head;
-
     }
 }

@@ -18,7 +18,7 @@ public class MTFencoder
             while( ( line = reader.readLine() ) != null )
             {
                 // Split the line into words
-                String [] words = line.split("(?=\\s+)");
+                String [] words = line.split("(?=\\s+)|(?=\\.)");
 
                 // Insert each token into the dictionary
                 for( int i = 0; i < words.length; i++ )
