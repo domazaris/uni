@@ -1,3 +1,8 @@
+/*
+ * Name: Dominic Azaris
+ * ID:   1297845
+ */
+
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

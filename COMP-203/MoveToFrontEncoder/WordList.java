@@ -1,3 +1,8 @@
+/*
+ * Name: Dominic Azaris
+ * ID:   1297845
+ */
+
 public class WordList
 {
     // ----------- Node ---------- \\
