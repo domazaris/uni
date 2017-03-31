@@ -28,15 +28,9 @@ public class MTFencoder
                 // Insert each token into the dictionary
                 for( int i = 0; i < words.length; i++ )
                 {
-                    // Check for spaces
+                    // Check for newlines
                     String word = words[i];
-                    if( word.length() == 1 && word.charAt(0) == ' ' )
-                    {
-                        // Print an s for spaces
-                        System.out.println( "s" );
-                        continue;
-                    }
-                    else if( word.length() == 1 && word.charAt(0) == '\n')
+                    if( word.length() == 1 && word.charAt(0) == '\n')
                     {
                         // Print a newline for each newline
                         System.out.println();
