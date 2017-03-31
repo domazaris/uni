@@ -59,13 +59,13 @@ public class MTFencoder
             }
         }
         catch( FileNotFoundException e )
-        { 
+        {
             // File not found
             System.err.println( e );
             System.exit(1);
         }
         catch( IOException e )
-        { 
+        {
             // Other exception
             System.err.println( e );
             System.exit(1);

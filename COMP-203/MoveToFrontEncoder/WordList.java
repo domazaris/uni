@@ -45,16 +45,23 @@ public class WordList
     }
 
     // --------- Members --------- \\
-    
+
     private Node head;
 
     // -------- Interface -------- \\
 
+    /** Create a new list */
     public WordList()
     {
         head = null;
     }
 
+    /**
+     * Inserts a word into the front of the list.
+     * If the word exists, the word is moved to the front
+     * and the old location is returned. If the word does not
+     * exist, it will return 0.
+     */
     public int insert( String data )
     {
         if( head == null )
@@ -67,11 +74,15 @@ public class WordList
         return insertFront( data );
     }
 
+    /**
+     * Returns the string at a given index, and
+     * moves it to the front of the list.
+     */
     public String at( int index )
     {
         // Get the node at the index
         Node node = getNodeAt( index );
-        
+
         // Move the node to the front
         moveToFront( node );
 
@@ -102,7 +113,7 @@ public class WordList
     {
         // Set the node to the head
         Node current = head;
-        
+
         // Iterate the list
         for(int i = 1; i < index; i++ )
         {

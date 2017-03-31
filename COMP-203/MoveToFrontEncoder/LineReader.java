@@ -10,6 +10,9 @@ import java.io.IOException;
 
 class LineReader
 {
+    /**
+     * Opens the file at the given path
+     */
     public LineReader( String filename ) throws FileNotFoundException, IOException
     {
         // Read 10MB max at a time
@@ -19,6 +22,9 @@ class LineReader
         reader = new BufferedReader( new FileReader( filename ), readahead );
     }
 
+    /**
+     * Reads a line at a time, including the newline character
+     */
     public String readLine() throws IOException
     {
         String line = new String();
@@ -31,12 +37,12 @@ class LineReader
             // Add the character to the line
             c = (char)i;
             line +=  (char)c;
-            
+
             // If the character was a newline, return as a full line
             if( c == '\n' )
             {
                 return line;
-            }        
+            }
         }
 
         if( line.length() == 0 )
