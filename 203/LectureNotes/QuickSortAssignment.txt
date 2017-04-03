@@ -1,0 +1,43 @@
+----b.ground
+
+lines of text
+read them in with buffered reader and tokenised
+line is a string
+can compare with equals - return true or false
+can compare strings using compareTo() - can tell you which one comes before the other in dictionary order
+
+----task
+read in strings, put in linked list of strings(lines)
+ask list to sort itself
+count how many string compares to put in sorted order
+LineList - print all things, isort & qsort 
+isort - insertion sort - n^2
+qsort - quick sort - nlog(n)
+
+
+----isort
+create a new temp list (empty)
+take items out of list in order by removing head, and put into temp list sorting the new node (small to big)
+not creating new nodes
+return how many string comparisons - performance metric - ~0.5n^2
+
+---qsort
+unordered list - sort it
+pick a pivot value in the list - take the head item - it comes out of the list
+compare all against the pivot, sort into two bins/list. Smaller than and larger than.
+duplicates doesnt matter what bin/list
+sort the smaller set, and sort the bigger set
+make a new list, will be sorter
+final sorted list will be: Small, pivot, Large
+pivot is a linked list with 1 item
+small and large lists are unsorted initially - when inserting from the orig list
+
+how to sort small and large - call qsort on those lists 
+qsort might need a concat method - concatenates two lists
+
+
+
+----summary
+FileSort.java
+shows which algorithm - isort or qsort does less comparisons
+3 weeks - due after teaching break
