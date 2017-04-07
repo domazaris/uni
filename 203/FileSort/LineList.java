@@ -27,63 +27,64 @@ public class LineList
 
     public int isort()
     {
-        LineList sorted_list = new LineList();
-        int comp_count = 0;
+        int comparisons = 0;
 
-        // Insert every node in the list into a sorted list
+        // Create a new list
+        LineList sorted_list = new LineList();
+
+        // Insert everything into the new list in order of small to large
         Node current = head;
         while( current != null )
         {
             Node next = current.next;
-            comp_count += sorted_list.insertOrdered( current );
+            comparisons += sorted_list.insertOrdered( current );
             current = next;
         }
 
-        // Point the head to the other lists head
+        // Set the new head
         head = sorted_list.getHead();
-
-        return comp_count;
+        return comparisons;
     }
 
     public int qsort()
     {
         int comparisons = 0;
 
-        // Create Three new lists
-        List pivot = new List();
-        List small = new List();
-        List big = new List();
+//         // Create Three new lists
+//         LineList pivot = new LineList();
+//         LineList small = new LineList();
+//         LineList big = new LineList();
+//
+//         // Select head as the pivot ( insert it )
+//         Node old_head = head;
+//         pivot.push( old_head );
 
-        // Select head as the pivot ( insert it )
-        Node old_head = head;
-        pivot.push( old_head );
+//         // Set current to head and loop through
+//         while( head != null )
+//         {
+//             int cmp = pivot.getHead().compareTo( cur.getData() );
+//             ++comparisons;
+//             if( cmp >= 0 )
+//             {
+//                 // Push all larger into big bin
+//                 Node node = head;
+//                 big.push( node );
+//             }
+//             else
+//             {
+//                 // Push all smaller into small bin
+//                 Node node = head;
+//                 small.push( old_head );
+//             }
+//         }
 
-        // Set current to head and loop through
-        while( head != null )
-        {
-            int cmp = pivot.getHead().compareTo( cur.getData() );
-            ++comparisons;
-            if( cmp >= 0 )
-            {
-                // Push all larger into big bin
-                Node node = head;
-                big.push( node );
-            }
-            else
-            {
-                // Push all smaller into small bin
-                Node node = head;
-                small.push( old_head );
-            }
-        }
-
-        // Sort the small and big queues
-        small.qsort();
-        big.qsort();
-
-        // Concat the lists
-        List new_list = new List();
-
+//         // Sort the small and big queues
+//         small.qsort();
+//         big.qsort();
+//
+//         // Concat the lists
+//         LineList new_list = new LineList();
+//
 
         return 0;
     }
@@ -93,7 +94,7 @@ public class LineList
         Node current = head;
         while( current != null )
         {
-//             System.out.println( current.getData() );
+            System.out.println( current.getData() );
             current = current.next;
         }
     }
@@ -105,24 +106,53 @@ public class LineList
 
     protected int insertOrdered( Node node )
     {
+        // Reset node
+        node.next = null;
+        node.previous = null;
+
+        // Check for a head
+        if( head == null )
+        {
+            head = node;
+            return 0;
+        }
+
+        // Iterate the list to find the new nodes place
         int comparisons = 0;
-//         if( head == null )
-//         {
-//             head = node;
-//         }
-//         else
-//         {
-//             Node current = head;
-//             while( current != null )
-//             {
-//                 // node lower than current - place here
-//                 int cmp = current.getData().compareTo( node.getData() );
-//                 ++comparisons;
-// //                 System.out.println( cmp + " " + current.getData().charAt(0) + " " + node.getData().charAt(0) );
-//
-//                 current = current.next;
-//             }
-//         }
+        Node cur = head;
+        while( cur != null )
+        {
+            // Do comparisons
+            int cmp = cur.getData().compareTo( node.getData());
+
+            ++comparisons;
+            if( cmp < 0)
+            {
+                // If node is less that cur, insert node before cur
+                node.next = cur;
+                node.previous = cur.previous;
+
+                // Set cur and previous
+                node.next.previous = node;
+                if( node.previous != null )
+                {
+                    node.previous.next = node;
+                }
+                break;
+            }
+            else if( cur.next == null )
+            {
+                // Reached end of list, place at end
+                cur.next = node;
+                node.previous = cur;
+                break;
+            }
+            else
+            {
+                // Continue
+                cur = cur.next;
+            }
+        }
         return comparisons;
     }
 
