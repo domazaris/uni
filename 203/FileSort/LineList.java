@@ -8,6 +8,7 @@ public class LineList
     public LineList()
     {
         head = null;
+        tail = null;
     }
 
     public void push( String line )
@@ -42,6 +43,7 @@ public class LineList
 
         // Set the new head
         head = sorted_list.getHead();
+        tail = sorted_list.getTail();
         return comparisons;
     }
 
@@ -82,25 +84,30 @@ public class LineList
         }
 
         // Sort the lists
-//         comparisons += small.qsort();
-//         comparisons += big.qsort();
-        comparisons += small.isort();
-        comparisons += big.isort();
+        comparisons += small.qsort();
+        comparisons += big.qsort();
 
         // Concat the lists
         LineList sorted_list = new LineList();
-        concatenateList( small, sorted_list );
-        concatenateList( pivot, sorted_list );
-        concatenateList( big, sorted_list );
+        pushBackList( small, sorted_list );
+        pushBackList( pivot, sorted_list );
+        pushBackList( big, sorted_list );
 
         // Set the new head of the current list
         head = sorted_list.getHead();
+        tail = sorted_list.getTail();
+
         return comparisons;
     }
 
     protected Node getHead()
     {
         return head;
+    }
+
+    protected Node getTail()
+    {
+        return tail;
     }
 
     protected int insertOrdered( Node node )
@@ -113,6 +120,7 @@ public class LineList
         if( head == null )
         {
             head = node;
+            tail = head;
             return 0;
         }
 
@@ -169,12 +177,12 @@ public class LineList
         return old_head;
     }
 
-    private void concatenateList( LineList src, LineList dest )
+    private void pushBackList( LineList src, LineList dest )
     {
         Node current = null;
         while( ( current = src.pop() ) != null )
         {
-            dest.push( current );
+            dest.pushBack( current );
         }
     }
 
@@ -186,16 +194,17 @@ public class LineList
             previous.next = new_node;
             new_node.previous = previous;
             new_node.next = null;
+            tail = new_node;
         }
         else
         {
-            // Middle of list
+            // New head
             if( previous == null )
             {
-                // New head
                 head = new_node;
             }
 
+            // Middle of list
             // Set the new middle nodes pointers
             new_node.next = next;
             new_node.previous = next.previous;
@@ -214,6 +223,7 @@ public class LineList
         if( head == null )
         {
             head = new_head;
+            tail = new_head;
         }
         else
         {
@@ -223,7 +233,23 @@ public class LineList
         }
     }
 
+    private void pushBack( Node new_tail )
+    {
+        if( tail == null )
+        {
+            head = new_tail;
+            tail = head;
+        }
+        else
+        {
+            new_tail.previous = tail;
+            tail.next = new_tail;
+            tail = new_tail;
+        }
+    }
+
     private Node head;
+    private Node tail;
     
     /**
      *
