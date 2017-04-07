@@ -49,6 +49,12 @@ public class LineList
     {
         int comparisons = 0;
 
+        if( head == null )
+        {
+            // Cant sort list as it has nothing here
+            return 0;
+        }
+
         // Create Three new lists
         LineList pivot = new LineList();
         LineList small = new LineList();
@@ -76,39 +82,19 @@ public class LineList
         }
 
         // Sort the lists
-        if( small.getHead() != null && small.getHead().next != null )
-        {
-            comparisons += small.qsort();
-        }
-        if( big.getHead() != null && big.getHead().next != null )
-        {
-            comparisons += big.qsort();
-        }
+//         comparisons += small.qsort();
+//         comparisons += big.qsort();
+        comparisons += small.isort();
+        comparisons += big.isort();
 
         // Concat the lists
         LineList sorted_list = new LineList();
-
-        current = null;
-        while( ( current = big.pop() ) != null )
-        {
-            sorted_list.push( current );
-        }
-
-        current = null;
-        while( ( current = pivot.pop() ) != null )
-        {
-            sorted_list.push( current );
-        }
-
-        current = null;
-        while( ( current = small.pop() ) != null )
-        {
-            sorted_list.push( current );
-        }
+        concatenateList( small, sorted_list );
+        concatenateList( pivot, sorted_list );
+        concatenateList( big, sorted_list );
 
         // Set the new head of the current list
         head = sorted_list.getHead();
-
         return comparisons;
     }
 
@@ -138,9 +124,9 @@ public class LineList
             // Do comparisons
             int cmp = cur.getData().compareTo( node.getData());
             ++comparisons;
-            if( cmp < 0 )
+            if( cmp > 0 )
             {
-                // Smaller, insert
+                // Larger, insert
                 insertMid( cur.previous, node, cur );
                 break;
             }
@@ -181,6 +167,15 @@ public class LineList
         }
 
         return old_head;
+    }
+
+    private void concatenateList( LineList src, LineList dest )
+    {
+        Node current = null;
+        while( ( current = src.pop() ) != null )
+        {
+            dest.push( current );
+        }
     }
 
     private void insertMid( Node previous, Node new_node, Node next )
