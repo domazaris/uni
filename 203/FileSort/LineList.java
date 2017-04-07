@@ -27,18 +27,16 @@ public class LineList
 
     public int isort()
     {
-        int comparisons = 0;
-
         // Create a new list
         LineList sorted_list = new LineList();
 
         // Insert everything into the new list in order of small to large
-        Node current = head;
-        while( current != null )
+        int comparisons = 0;
+        while( head != null )
         {
-            Node next = current.next;
-            comparisons += sorted_list.insertOrdered( current );
-            current = next;
+            Node old_head = head;
+            head = head.next;
+            comparisons += sorted_list.insertOrdered( old_head );
         }
 
         // Set the new head
@@ -124,32 +122,22 @@ public class LineList
         {
             // Do comparisons
             int cmp = cur.getData().compareTo( node.getData());
-
             ++comparisons;
-            if( cmp < 0)
+            if( cmp < 0 )
             {
-                // If node is less that cur, insert node before cur
-                node.next = cur;
-                node.previous = cur.previous;
-
-                // Set cur and previous
-                node.next.previous = node;
-                if( node.previous != null )
-                {
-                    node.previous.next = node;
-                }
+                // Smaller, insert
+                insertMid( cur.previous, node, cur );
                 break;
             }
             else if( cur.next == null )
             {
                 // Reached end of list, place at end
-                cur.next = node;
-                node.previous = cur;
+                insertMid( cur, node, null );
                 break;
             }
             else
             {
-                // Continue
+                // Bigger or equal, continue
                 cur = cur.next;
             }
         }
@@ -173,6 +161,37 @@ public class LineList
         }
 
         return old_head;
+    }
+
+    private void insertMid( Node previous, Node new_node, Node next )
+    {
+        if( next == null )
+        {
+            // End of list
+            previous.next = new_node;
+            new_node.previous = previous;
+            new_node.next = null;
+        }
+        else
+        {
+            // Middle of list
+            if( previous == null )
+            {
+                // New head
+                head = new_node;
+            }
+
+            // Set the new middle nodes pointers
+            new_node.next = next;
+            new_node.previous = next.previous;
+
+            // Set next and previous
+            new_node.next.previous = new_node;
+            if( new_node.previous != null )
+            {
+                new_node.previous.next = new_node;
+            }
+        }
     }
 
     private Node head;
