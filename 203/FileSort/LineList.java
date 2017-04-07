@@ -13,15 +13,16 @@ public class LineList
     public void push( String line )
     {
         Node new_head = new Node( line );
-        if( head == null )
+        push( new_head );
+    }
+
+    public void printList()
+    {
+        Node current = head;
+        while( current != null )
         {
-            head = new_head;
-        }
-        else
-        {
-            new_head.next = head;
-            head.previous = new_head;
-            head = new_head;
+            System.out.println( current.getData() );
+            current = current.next;
         }
     }
 
@@ -48,53 +49,67 @@ public class LineList
     {
         int comparisons = 0;
 
-//         // Create Three new lists
-//         LineList pivot = new LineList();
-//         LineList small = new LineList();
-//         LineList big = new LineList();
-//
-//         // Select head as the pivot ( insert it )
-//         Node old_head = head;
-//         pivot.push( old_head );
+        // Create Three new lists
+        LineList pivot = new LineList();
+        LineList small = new LineList();
+        LineList big = new LineList();
 
-//         // Set current to head and loop through
-//         while( head != null )
-//         {
-//             int cmp = pivot.getHead().compareTo( cur.getData() );
-//             ++comparisons;
-//             if( cmp >= 0 )
-//             {
-//                 // Push all larger into big bin
-//                 Node node = head;
-//                 big.push( node );
-//             }
-//             else
-//             {
-//                 // Push all smaller into small bin
-//                 Node node = head;
-//                 small.push( old_head );
-//             }
-//         }
+        // Pop off the head and push it into the pivot list
+        pivot.push( pop() );
 
-//         // Sort the small and big queues
-//         small.qsort();
-//         big.qsort();
-//
-//         // Concat the lists
-//         LineList new_list = new LineList();
-//
-
-        return 0;
-    }
-
-    public void printList()
-    {
-        Node current = head;
-        while( current != null )
+        // Iterate and sort into the small/big lists
+        Node current = null;
+        while( ( current = pop() ) != null )
         {
-            System.out.println( current.getData() );
-            current = current.next;
+            // Compare
+            int cmp = current.getData().compareTo( pivot.getHead().getData() );
+            comparisons++;
+
+            if( cmp < 0 )
+            {
+                small.push( current );
+            }
+            else
+            {
+                big.push( current );
+            }
         }
+
+        // Sort the lists
+        if( small.getHead() != null && small.getHead().next != null )
+        {
+            comparisons += small.qsort();
+        }
+        if( big.getHead() != null && big.getHead().next != null )
+        {
+            comparisons += big.qsort();
+        }
+
+        // Concat the lists
+        LineList sorted_list = new LineList();
+
+        current = null;
+        while( ( current = big.pop() ) != null )
+        {
+            sorted_list.push( current );
+        }
+
+        current = null;
+        while( ( current = pivot.pop() ) != null )
+        {
+            sorted_list.push( current );
+        }
+
+        current = null;
+        while( ( current = small.pop() ) != null )
+        {
+            sorted_list.push( current );
+        }
+
+        // Set the new head of the current list
+        head = sorted_list.getHead();
+
+        return comparisons;
     }
 
     protected Node getHead()
@@ -146,6 +161,11 @@ public class LineList
 
     private Node pop()
     {
+        if( head == null )
+        {
+            return null;
+        }
+
         Node old_head = head;
         Node new_head = head.next;
 
@@ -191,6 +211,20 @@ public class LineList
             {
                 new_node.previous.next = new_node;
             }
+        }
+    }
+
+    private void push( Node new_head )
+    {
+        if( head == null )
+        {
+            head = new_head;
+        }
+        else
+        {
+            new_head.next = head;
+            head.previous = new_head;
+            head = new_head;
         }
     }
 
