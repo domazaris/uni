@@ -21,7 +21,7 @@ public class FileSort
             String line;
             while( ( line = reader.readLine() ) != null )
             {
-                list.push( line );
+                list.pushFront( line );
             }
         }
         catch( FileNotFoundException e )

@@ -3,30 +3,54 @@
  * ID:   1297845
  */
 
+ /**
+  * This class is a list data structure that takes strings as nodes.
+  * It also contains different sorting methods.
+  */
 public class LineList
 {
+    /**
+     * Constructor
+     */
     public LineList()
     {
+        // Set the head and tail to null
         head = null;
         tail = null;
     }
 
-    public void push( String line )
+    /**
+     * Pushes a new string onto the front of the list.
+     *
+     * @param line The item to push onto the list.
+     */
+    public void pushFront( String line )
     {
+        // Create a node and push it into the list
         Node new_head = new Node( line );
-        push( new_head );
+        pushFront( new_head );
     }
 
+    /**
+     * Prints the entire list to stdout, with a newline character between elements.
+     */
     public void printList()
     {
+        // Set current to the start of the list
         Node current = head;
         while( current != null )
         {
+            // Print the data from each node, then iterate
             System.out.println( current.getData() );
             current = current.next;
         }
     }
 
+    /**
+     * Sorts the list using the insertions sort algorithm. This has n^2 comparisons.
+     *
+     * @return A count of how many string comparisons were done.
+     */
     public int isort()
     {
         // Create a new list
@@ -41,12 +65,17 @@ public class LineList
             comparisons += sorted_list.insertOrdered( old_head );
         }
 
-        // Set the new head
+        // Set the new head/tail
         head = sorted_list.getHead();
         tail = sorted_list.getTail();
         return comparisons;
     }
 
+    /**
+     * Sorts the list using the quick sort algorithm. This has n * log(n) comparisons.
+     *
+     * @return A count of how many string comparisons were done.
+     */
     public int qsort()
     {
         int comparisons = 0;
@@ -63,11 +92,11 @@ public class LineList
         LineList big = new LineList();
 
         // Pop off the head and push it into the pivot list
-        pivot.push( pop() );
+        pivot.pushFront( popFront() );
 
         // Iterate and sort into the small/big lists
         Node current = null;
-        while( ( current = pop() ) != null )
+        while( ( current = popFront() ) != null )
         {
             // Compare
             int cmp = current.getData().compareTo( pivot.getHead().getData() );
@@ -75,11 +104,12 @@ public class LineList
 
             if( cmp < 0 )
             {
-                small.push( current );
+                // Push onto the smaller list
+                small.pushFront( current );
             }
             else
             {
-                big.push( current );
+                big.pushFront( current );
             }
         }
 
@@ -100,16 +130,32 @@ public class LineList
         return comparisons;
     }
 
+    /**
+     * Gets the head of the list.
+     *
+     * @return The head node.
+     */
     protected Node getHead()
     {
         return head;
     }
 
+    /**
+     * Gets the tail of the list.
+     *
+     * @return The tail node.
+     */
     protected Node getTail()
     {
         return tail;
     }
 
+    /**
+     * Inserts a node into the list in ascending order.
+     *
+     * @param node The node to insert
+     * @return The amount of string comparisons that took place.
+     */
     protected int insertOrdered( Node node )
     {
         // Reset node
@@ -135,13 +181,13 @@ public class LineList
             if( cmp > 0 )
             {
                 // Larger, insert
-                insertMid( cur.previous, node, cur );
+                insert( cur.previous, node, cur );
                 break;
             }
             else if( cur.next == null )
             {
                 // Reached end of list, place at end
-                insertMid( cur, node, null );
+                insert( cur, node, null );
                 break;
             }
             else
@@ -153,40 +199,109 @@ public class LineList
         return comparisons;
     }
 
-    private Node pop()
+    /**
+     * Pops the front of the list off.
+     *
+     * @return The old head of the list.
+     */
+    private Node popFront()
     {
+        // Check if the list is empty
         if( head == null )
         {
             return null;
         }
 
+        // Save the old head
         Node old_head = head;
         Node new_head = head.next;
 
+        // Set up the new heads connections
         if( new_head != null )
         {
             new_head.previous = null;
         }
+
+        // Set head to the new head
         head = new_head;
 
+        // Set the old heads connections
         if( old_head != null)
         {
             old_head.next = null;
         }
 
+        // Return the original head
         return old_head;
     }
 
+
+    /**
+     * Pushes a node onto the front of the list
+     *
+     * @param new_head The node to add to the list
+     */
+    private void pushFront( Node new_head )
+    {
+        if( head == null )
+        {
+            head = new_head;
+            tail = new_head;
+        }
+        else
+        {
+            new_head.next = head;
+            head.previous = new_head;
+            head = new_head;
+        }
+    }
+
+    /**
+     * Pushes a node onto the back of the list
+     *
+     * @param new_tail The node to add to the list
+     */
+    private void pushBack( Node new_tail )
+    {
+        if( tail == null )
+        {
+            // List is empty
+            head = new_tail;
+            tail = head;
+        }
+        else
+        {
+            // Add new tail to list
+            new_tail.previous = tail;
+            tail.next = new_tail;
+            tail = new_tail;
+        }
+    }
+
+    /**
+     * Pushes an entire list onto the back of a list.
+     *
+     * @param src The list that will be added.
+     * @param dest The list that will be extended
+     */
     private void pushBackList( LineList src, LineList dest )
     {
+        // Push every element onto the back of the list
         Node current = null;
-        while( ( current = src.pop() ) != null )
+        while( ( current = src.popFront() ) != null )
         {
             dest.pushBack( current );
         }
     }
 
-    private void insertMid( Node previous, Node new_node, Node next )
+    /**
+     * Inserts a new in between two other nodes.
+     *
+     * @param previous The new nodes previous
+     * @param new_node The new node
+     * @param next The new nodes next
+     */
+    private void insert( Node previous, Node new_node, Node next )
     {
         if( next == null )
         {
@@ -218,54 +333,46 @@ public class LineList
         }
     }
 
-    private void push( Node new_head )
-    {
-        if( head == null )
-        {
-            head = new_head;
-            tail = new_head;
-        }
-        else
-        {
-            new_head.next = head;
-            head.previous = new_head;
-            head = new_head;
-        }
-    }
-
-    private void pushBack( Node new_tail )
-    {
-        if( tail == null )
-        {
-            head = new_tail;
-            tail = head;
-        }
-        else
-        {
-            new_tail.previous = tail;
-            tail.next = new_tail;
-            tail = new_tail;
-        }
-    }
-
-    private Node head;
-    private Node tail;
-    
     /**
-     *
+     * The head of the list
+     */
+    private Node head;
+
+    /**
+     * The tail of the list
+     */
+    private Node tail;
+
+    /**
+     * This class wraps some data with next and previous pointers.
      */
     private class Node
     {
+        /**
+         * Constructs a node
+         *
+         * @param d The data that the node will hold
+         */
         public Node( String d )
         {
+            // Set the data to d
             data = d;
+
+            // Set next and prev to null
             next = null;
             previous = null;
         }
+
+        /**
+         * Gets the data associated with the node.
+         *
+         * @return The data as a String
+         */
         public String getData()
         {
             return data;
         }
+
         public Node next;
         public Node previous;
         private String data;
