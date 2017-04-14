@@ -1,0 +1,2 @@
+'amateur',70,1
+'experienced',50,1

@@ -1,0 +1,4 @@
+'arod','1baseball1','555123123','arod@dia.com','aaron','rodrick'
+'bsmith','brysmirulez123','555245665','bsimon@dia.com','bryan','smith'
+'bsimon','xxCatzxx','555754334','bsimon@dia.com','betty','simon'
+'abuggs','Xjfr832n','555246159','abuggs@dia.com','ashley','buggs'
