@@ -1,9 +1,0 @@
-truncate table Client
-truncate table LessonType
-truncate table Administrator
-truncate table Document
-truncate table Appointment
-truncate table TimeSlot
-truncate table Car
-truncate table Instructor
-truncate table AssignedTo

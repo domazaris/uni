@@ -38,7 +38,8 @@ create table Appointment
     id int not null,
     notes varchar(500),
     client_username varchar(50) not null,
-    lesson_type varchar(50) not null
+    lesson_type varchar(50) not null,
+    car int not null
 )
 
 create table TimeSlot
@@ -52,8 +53,7 @@ create table TimeSlot
 create table Car
 (
     license int not null,
-    make varchar(50),
-    appointment int
+    make varchar(50)
 )
 
 
