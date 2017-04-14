@@ -19,5 +19,3 @@ insert into Instructor values('abuggs','Xjfr832n','555246159','abuggs@dia.com','
 insert into Administrator values('bjones','bennyboy99','bjones@dia.com','benny','jones')
 insert into Administrator values('edawes','password','edawes@dia.com','emma','dawes')
 insert into Administrator values('kbrock','123mainguy321','kbrock@dia.com','kennedy','brock')
-
--- Timeslot ( one month )

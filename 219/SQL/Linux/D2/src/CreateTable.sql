@@ -4,8 +4,6 @@ create table Car
     make varchar(20),
     primary key(license)
 )
-
-
 create table TimeSlot
 (
     id int not null,
@@ -15,7 +13,6 @@ create table TimeSlot
     year int not null,
     primary key(id)
 )
-
 create table Administrator
 (
     username varchar(10) not null,
@@ -23,9 +20,8 @@ create table Administrator
     email varchar(15) not null,
     fname varchar(20) not null,
     surname varchar(20) not null,
-    primary key(username)
+    primary key(username, passwd)
 )
-
 create table LessonType
 (
     name varchar(15) not null,
@@ -33,7 +29,6 @@ create table LessonType
     hours int not null,
     primary key(name)
 )
-
 create table Instructor
 (
     username varchar(10) not null,
@@ -42,9 +37,8 @@ create table Instructor
     email varchar(20) not null,
     fname varchar(10) not null,
     surname varchar(10) not null,
-    primary key(username)
+    primary key(username, passwd)
 )
-
 create table Client
 (
     username varchar(10) not null,
@@ -54,10 +48,9 @@ create table Client
     email varchar(20) not null,
     phone varchar(10) not null,
     lesson_type varchar(15) not null,
-    primary key(username),
+    primary key(username, passwd),
     foreign key(lesson_type) references LessonType
 )
-
 create table Document
 (
     id int not null,
@@ -66,10 +59,8 @@ create table Document
     year int not null,
     client_username varchar(10) not null,
     link varchar(50),
-    primary key(id),
-    foreign key(client_username) references Client
+    primary key(id)
 )
-
 create table Appointment
 (
     id int not null,
@@ -80,9 +71,7 @@ create table Appointment
     time_slot int not null,
     notes varchar(50),
     primary key(id),
-    foreign key(client_username) references Client,
     foreign key(lesson_type) references LessonType,
     foreign key(car) references Car,
-    foreign key(instructor) references Instructor,
     foreign key(time_slot) references TimeSlot
 )
