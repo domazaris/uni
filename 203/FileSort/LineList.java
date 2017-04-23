@@ -80,7 +80,7 @@ public class LineList
     {
         int comparisons = 0;
 
-        if( head == null )
+        if( head == null || head == tail )
         {
             // Cant sort list as it has nothing here
             return 0;
