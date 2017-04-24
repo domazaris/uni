@@ -33,6 +33,8 @@ public class FileSort
             {
                 list.pushFront( line );
             }
+
+            reader.close();
         }
         catch( FileNotFoundException e )
         {

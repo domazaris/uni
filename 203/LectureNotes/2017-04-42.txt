@@ -7,3 +7,8 @@ Test:
 Binary Search Trees:
 * Self referential structures - nodes: (key, data, bigger, smaller)
 * Methods: insert(key, data), data find(key), bool hasKey(key), 
+
+
+Issues:
+* How to keep balances- check on every insert and remove
+* Traversing the tree
