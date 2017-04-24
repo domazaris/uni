@@ -1,0 +1,9 @@
+Test:
+* Java questions - main routine, public/private, strings etc.
+* bits of java code 
+* partial defn of linked list - write insert method/write remove method/swap 2 elements etc.
+
+
+Binary Search Trees:
+* Self referential structures - nodes: (key, data, bigger, smaller)
+* Methods: insert(key, data), data find(key), bool hasKey(key), 
