@@ -8,3 +8,6 @@
 project.lock.json
 bin/
 obj/
+
+### KDevelop
+*kdev4*
