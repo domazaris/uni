@@ -8,7 +8,7 @@ public class BSTlex
         data = null;
         smaller = null;
         bigger = null;
-        previous = null;
+        parent = null;
     }
 
     /**
@@ -103,23 +103,15 @@ public class BSTlex
      */
     public void delete( String key )
     {
-        // Remove this node
+        // Comparison
         int cmp = data.compareTo(key);
         if( cmp == 0 )
         {
-            if( previous == null )
-            {
-            }
-            else if( this == previous.smaller )
-            {
-            }
-            else if( this == previous.bigger )
-            {
-            }
-            return;
+            // This node - delete
+            deleteThis();
         }
 
-        // Find key
+        // Not this node, find the key
         if( cmp < 0 )
         {
             if( bigger != null )
@@ -139,7 +131,7 @@ public class BSTlex
     /**
      *  @brief Prints the entire list from smallest to largest in order.
      *  @param key The key for the tree.
-     *  @param previous The tree that points to the new tree.
+     *  @param parent The tree that points to the new tree.
      */
     public void printAll()
     {
@@ -150,7 +142,10 @@ public class BSTlex
         }
 
         // Print self/middle
-        println(data);
+        if( data != null)
+        {
+            println(data);
+        }
 
         // Print big
         if( bigger != null )
@@ -166,23 +161,60 @@ public class BSTlex
         System.out.println(line);
     }
 
+    private void deleteThis()
+    {
+        if( bigger != null )
+        {
+            // Children - set new middle node
+            BSTlex middle = findSmallest( bigger );
+            middle.smaller = smaller;
+
+            // Parent
+            if( parent == null )
+            {
+                // Root node
+            }
+            else if( this == parent.bigger )
+            {
+                middle.parent = parent.bigger;
+            }
+            else if( this == parent.smaller )
+            {
+                middle.parent = parent.smaller;
+            }
+        }
+        else if( smaller != null )
+        {
+            smaller.parent = parent;
+        }
+        else
+        {
+            // No children
+        }
+    }
+
+    private BSTlex findSmallest( BSTlex node )
+    {
+
+    }
+
     /**
      *  @brief Creates a new tree.
      *  @param key The key for the tree.
-     *  @param previous The tree that points to the new tree.
+     *  @param parent The tree that points to the new tree.
      */
-    protected BSTlex( String key, BSTlex previous )
+    protected BSTlex( String key, BSTlex parent )
     {
         data = key;
         smaller = null;
         bigger = null;
-        previous = previous;
+        parent = parent;
     }
 
     // ----------------- Connections ------------------
     protected BSTlex smaller;
     protected BSTlex bigger;
-    private BSTlex previous;
+    private BSTlex parent;
 
     // ------------------- Members --------------------
     private String data;

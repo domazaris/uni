@@ -23,7 +23,7 @@ public class BSTTest
         BSTlex tree = new BSTlex();
 
         // Do a bunch of iterations
-        for(int i = 0; i <= iterations; i++)
+        for(int i = 0; i < iterations; i++)
         {
             // Insert and check
             String i_str = Integer.toString(i);
@@ -32,16 +32,21 @@ public class BSTTest
             {
                 err("Could not find inserted key " + i_str + "." );
             }
-
-//             // Remove and check
-//             tree.delete( i_str );
-//             if( tree.find(i_str) )
-//             {
-//                 err("Found removed key in tree " + i_str + "." );
-//             }
         }
 
+        // Print everything
         tree.printAll();
+
+        for(int i = 8; i < iterations; i++)
+        {
+            // Remove and check
+            String i_str = Integer.toString(i);
+            tree.delete( i_str );
+            if( tree.find(i_str) )
+            {
+                err("Found removed key in tree " + i_str + "." );
+            }
+        }
 
         println("Test completed " + iterations + " iterations.");
         return;
