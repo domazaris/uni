@@ -1,4 +1,4 @@
-public class BST
+public class OddWords
 {
     public static void println( String p )
     {
@@ -20,8 +20,8 @@ public class BST
         }
 
         // Create Tree
-        BinarySearchTree tree = new BinarySearchTree( 0 );
-        if( ! tree.hasKey( 0 ) )
+        BSTlex tree = new BSTlex( "0" );
+        if( ! tree.find( "0" ) )
         {
             err("Could not find inserted key 0." );
         }
@@ -30,17 +30,18 @@ public class BST
         for(int i = 1; i <= iterations; i++)
         {
             // Insert and check
-            tree.insert( i );
-            if( ! tree.hasKey(i) )
+            String i_str = Integer.toString(i);
+            tree.insert( i_str );
+            if( ! tree.find(i_str) )
             {
-                err("Could not find inserted key " + i + "." );
+                err("Could not find inserted key " + i_str + "." );
             }
 
             // Remove and check
-            tree.remove( i );
-            if( tree.hasKey(i) )
+            tree.delete( i_str );
+            if( tree.find(i_str) )
             {
-                err("Found removed key in tree " + i + "." );
+                err("Found removed key in tree " + i_str + "." );
             }
         }
 
