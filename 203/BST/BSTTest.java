@@ -20,14 +20,10 @@ public class BSTTest
         }
 
         // Create Tree
-        BSTlex tree = new BSTlex( "0" );
-        if( ! tree.find( "0" ) )
-        {
-            err("Could not find inserted key 0." );
-        }
+        BSTlex tree = new BSTlex();
 
         // Do a bunch of iterations
-        for(int i = 1; i <= iterations; i++)
+        for(int i = 0; i <= iterations; i++)
         {
             // Insert and check
             String i_str = Integer.toString(i);
@@ -37,13 +33,15 @@ public class BSTTest
                 err("Could not find inserted key " + i_str + "." );
             }
 
-            // Remove and check
-            tree.delete( i_str );
-            if( tree.find(i_str) )
-            {
-                err("Found removed key in tree " + i_str + "." );
-            }
+//             // Remove and check
+//             tree.delete( i_str );
+//             if( tree.find(i_str) )
+//             {
+//                 err("Found removed key in tree " + i_str + "." );
+//             }
         }
+
+        tree.printAll();
 
         println("Test completed " + iterations + " iterations.");
         return;

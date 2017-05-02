@@ -2,11 +2,10 @@ public class BSTlex
 {
     /**
      *  @brief Creates a new tree.
-     *  @param key The key for the tree.
      */
-    public BSTlex( String key )
+    public BSTlex()
     {
-        data = key;
+        data = null;
         smaller = null;
         bigger = null;
         previous = null;
@@ -18,6 +17,12 @@ public class BSTlex
      */
     public void insert( String key )
     {
+        if( data == null )
+        {
+            data = key;
+            return;
+        }
+
         // Return if the key is in the tree
         if( find( key ) )
         {
@@ -131,10 +136,27 @@ public class BSTlex
         }
     }
 
-
+    /**
+     *  @brief Prints the entire list from smallest to largest in order.
+     *  @param key The key for the tree.
+     *  @param previous The tree that points to the new tree.
+     */
     public void printAll()
     {
-        println( "All" );
+        // Print small
+        if( smaller != null )
+        {
+            smaller.printAll();
+        }
+
+        // Print self/middle
+        println(data);
+
+        // Print big
+        if( bigger != null )
+        {
+            bigger.printAll();
+        }
     }
 
     // ---------------- Helper methods ----------------
