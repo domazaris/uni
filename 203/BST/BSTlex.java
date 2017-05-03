@@ -68,7 +68,12 @@ public class BSTlex
      */
     public Boolean find( String key )
     {
-        int cmp = data.compareTo(key);
+        if( data == null )
+        {
+            return false;
+        }
+
+        int cmp = data.compareTo( key );
         if( cmp == 0 )
         {
             return true;
@@ -103,11 +108,17 @@ public class BSTlex
      */
     public void delete( String key )
     {
+        if( data == null )
+        {
+            return;
+        }
+
         // Comparison
         int cmp = data.compareTo(key);
         if( cmp == 0 )
         {
             // This node - delete
+            println("PRED: " + key);
             deleteThis();
         }
 
@@ -161,41 +172,80 @@ public class BSTlex
         System.out.println(line);
     }
 
-    private void deleteThis()
+    /**
+     *  @brief Removes the current tree node from the tree.
+     */
+    protected void deleteThis()
     {
+        println("DATA: " + data);
         if( bigger != null )
         {
-            // Children - set new middle node
-            BSTlex middle = findSmallest( bigger );
-            middle.smaller = smaller;
+            // Bigger - swap key
+            BSTlex smallest = bigger.findSmallest();
+            data = smallest.swapKey( data );
 
-            // Parent
-            if( parent == null )
+            if( smallest.bigger != null )
             {
-                // Root node
-            }
-            else if( this == parent.bigger )
-            {
-                middle.parent = parent.bigger;
-            }
-            else if( this == parent.smaller )
-            {
-                middle.parent = parent.smaller;
+                bigger = smallest.bigger;
             }
         }
         else if( smaller != null )
         {
-            smaller.parent = parent;
+            // Has smaller - swap key
+            BSTlex biggest = smaller.findBiggest();
+            data = biggest.swapKey( data );
+
+            if( biggest.smaller != null )
+            {
+                smaller = biggest.smaller;
+            }
         }
-        else
+
+        // Remove Node
+        if( parent != null )
         {
-            // No children
+            // Leaf
+            if( parent.smaller == this )
+            {
+                parent.smaller = null;
+            }
+            else if( parent.bigger == this )
+            {
+                parent.bigger = null;
+            }
+            parent = null;
+        }
+        else if( parent == null )
+        {
+            // Leaf with no parent - i.e. root
+            data = null;
         }
     }
 
-    private BSTlex findSmallest( BSTlex node )
+    protected BSTlex findSmallest()
     {
+        if( smaller != null )
+        {
+            return smaller.findSmallest();
+        }
+        else
+        {
+            // This is the last node in the tree
+            return this;
+        }
+    }
 
+    protected BSTlex findBiggest()
+    {
+        if( bigger != null )
+        {
+            return bigger.findBiggest();
+        }
+        else
+        {
+            // This is the last node in the tree
+            return this;
+        }
     }
 
     /**
@@ -211,9 +261,17 @@ public class BSTlex
         parent = parent;
     }
 
+    protected String swapKey( String key )
+    {
+        println("SWAP: " + key + ", " + data);
+        String temp = data;
+        data = key;
+        return data;
+    }
+
     // ----------------- Connections ------------------
-    protected BSTlex smaller;
-    protected BSTlex bigger;
+    private BSTlex smaller;
+    private BSTlex bigger;
     private BSTlex parent;
 
     // ------------------- Members --------------------

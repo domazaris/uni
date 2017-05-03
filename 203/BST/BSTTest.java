@@ -8,7 +8,7 @@ public class BSTTest
     public static void err( String p )
     {
         System.err.println("Error: " + p);
-        System.exit(1);
+//         System.exit(1);
     }
 
     public static void main( String args[] )
@@ -36,12 +36,21 @@ public class BSTTest
 
         // Print everything
         tree.printAll();
-
-        for(int i = 8; i < iterations; i++)
+        for(int i = 0; i < iterations; i++)
+//         for(int i = iterations-1; i >= 0; i--)
         {
             // Remove and check
             String i_str = Integer.toString(i);
+            if(! tree.find(i_str) )
+            {
+                err("Key was removed by wrong code." );
+            }
+
+            println("Deleteing " + i_str );
             tree.delete( i_str );
+
+            tree.printAll();
+
             if( tree.find(i_str) )
             {
                 err("Found removed key in tree " + i_str + "." );
@@ -51,5 +60,4 @@ public class BSTTest
         println("Test completed " + iterations + " iterations.");
         return;
     }
-
 }
