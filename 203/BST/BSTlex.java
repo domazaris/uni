@@ -134,42 +134,88 @@ public class BSTlex
         {
             if( childCount() == 1 )
             {
-                if( smaller != null )
-                {
-                    if( parent.smaller == this )
-                    {
-                        parent.smaller = smaller;
-                    }
-                    else if( parent.bigger == this )
-                    {
-                        parent.bigger = bigger;
-                    }
-                }
+                deleteOneChild();
             }
             else if( childCount() == 2 )
             {
+                deleteTwoChildren();
             }
             else
             {
-                // No children
-                if( parent != null )
-                {
-                    if( parent.smaller == this )
-                    {
-                        parent.smaller = null;
-                    }
-                    else if( parent.bigger == this )
-                    {
-                        parent.bigger = null;
-                    }
-                }
-                parent = null;
-
+                deleteNoChildren();
             }
 
             // TODO: Add this back in
-//             data = null;
+            data = null;
         }
+    }
+
+    private void deleteNoChildren()
+    {
+        // No children
+        if( parent != null )
+        {
+            if( parent.smaller == this )
+            {
+                parent.smaller = null;
+            }
+            else if( parent.bigger == this )
+            {
+                parent.bigger = null;
+            }
+        }
+        parent = null;
+    }
+
+    private void deleteOneChild()
+    {
+        if( parent == null )
+        {
+            // Root node
+            if( smaller != null )
+            {
+                // Swap root with smaller
+                String temp = data;
+                data = smaller.swapKey( data );
+                smaller.delete( temp );
+            }
+            else if( bigger != null)
+            {
+                String temp = data;
+                data = bigger.swapKey( data );
+                bigger.delete( temp );
+            }
+        }
+        else
+        {
+            println("DELETEING: " + data);
+            if( smaller != null )
+            {
+                if( parent.smaller == this )
+                {
+                    parent.smaller = smaller;
+                }
+                if( parent.bigger == this )
+                {
+                    parent.bigger = smaller;
+                }
+            }
+            else if (bigger != null)
+            {
+                if( parent.smaller == this )
+                {
+                    parent.smaller = bigger;
+                }
+                if( parent.bigger == this )
+                {
+                    parent.bigger = bigger;
+                }
+            }
+        }
+    }
+
+    private void deleteTwoChildren()
+    {
     }
 
     /**
@@ -234,22 +280,21 @@ public class BSTlex
     /**
      *  @brief Creates a new tree.
      *  @param key The key for the tree.
-     *  @param parent The tree that points to the new tree.
+     *  @param p The tree that points to the new tree.
      */
-    protected BSTlex( String key, BSTlex parent )
+    protected BSTlex( String key, BSTlex p )
     {
-        data = key;
-        smaller = null;
-        bigger = null;
-        parent = parent;
+        this.data = key;
+        this.smaller = null;
+        this.bigger = null;
+        this.parent = p;
     }
 
     protected String swapKey( String key )
     {
-        println("SWAP: " + key + ", " + data);
         String temp = data;
         data = key;
-        return data;
+        return temp;
     }
 
     /**

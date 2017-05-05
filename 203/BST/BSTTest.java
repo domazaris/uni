@@ -1,6 +1,14 @@
 public class BSTTest
 {
-    public static void println( String p )
+    private static int[] test_data;
+
+    private static void fillData( int amount )
+    {
+        test_data = new int[ amount ];
+
+    }
+
+    public static void out( String p )
     {
         System.out.println(p);
     }
@@ -36,8 +44,8 @@ public class BSTTest
 
         // Print everything
         tree.printAll();
-//         for(int i = 0; i < iterations; i++)
-        for(int i = iterations-1; i >= 0; i--)
+        for(int i = 0; i < iterations; i++)
+        // for(int i = iterations-1; i >= 0; i--)
         {
             // Remove and check
             String i_str = Integer.toString(i);
@@ -46,7 +54,7 @@ public class BSTTest
                 err("Key was removed by wrong code." );
             }
 
-            println("Deleteing " + i_str );
+            out("Deleteing " + i_str );
             tree.delete( i_str );
 
             tree.printAll();
@@ -57,7 +65,7 @@ public class BSTTest
             }
         }
 
-        println("Test completed " + iterations + " iterations.");
+        out("Test completed " + iterations + " iterations.");
         return;
     }
 }
