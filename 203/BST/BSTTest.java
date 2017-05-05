@@ -36,8 +36,8 @@ public class BSTTest
 
         // Print everything
         tree.printAll();
-        for(int i = 0; i < iterations; i++)
-//         for(int i = iterations-1; i >= 0; i--)
+//         for(int i = 0; i < iterations; i++)
+        for(int i = iterations-1; i >= 0; i--)
         {
             // Remove and check
             String i_str = Integer.toString(i);

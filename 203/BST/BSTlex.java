@@ -112,6 +112,9 @@ public class BSTlex
         {
             return;
         }
+
+        int cmp = data.compareTo( key );
+
         // Not this node, find the key
         if( cmp < 0 )
         {
@@ -131,6 +134,17 @@ public class BSTlex
         {
             if( childCount() == 1 )
             {
+                if( smaller != null )
+                {
+                    if( parent.smaller == this )
+                    {
+                        parent.smaller = smaller;
+                    }
+                    else if( parent.bigger == this )
+                    {
+                        parent.bigger = bigger;
+                    }
+                }
             }
             else if( childCount() == 2 )
             {
@@ -145,11 +159,14 @@ public class BSTlex
                 }
                 else if( parent.bigger == this )
                 {
-                    parent.smaller = null;
+                    parent.bigger = null;
                 }
-                parent = null;
-                data = null;
             }
+            parent = null;
+            data = null;
+
+            parent = null;
+            data = null;
         }
     }
 
