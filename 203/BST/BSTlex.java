@@ -112,16 +112,6 @@ public class BSTlex
         {
             return;
         }
-
-        // Comparison
-        int cmp = data.compareTo(key);
-        if( cmp == 0 )
-        {
-            // This node - delete
-            println("PRED: " + key);
-            deleteThis();
-        }
-
         // Not this node, find the key
         if( cmp < 0 )
         {
@@ -130,11 +120,35 @@ public class BSTlex
                 bigger.delete(key);
             }
         }
-        else
+        else if( cmp > 0 )
         {
             if( smaller != null )
             {
                 smaller.delete(key);
+            }
+        }
+        else
+        {
+            if( childCount() == 1 )
+            {
+            }
+            else if( childCount() == 2 )
+            {
+            }
+
+            // Final removal - removing parent and data
+            if( parent != null )
+            {
+                if( parent.smaller == this )
+                {
+                    parent.smaller = null;
+                }
+                else if( parent.bigger == this )
+                {
+                    parent.smaller = null;
+                }
+                parent = null;
+                data = null;
             }
         }
     }
@@ -170,56 +184,6 @@ public class BSTlex
     private void println(String line)
     {
         System.out.println(line);
-    }
-
-    /**
-     *  @brief Removes the current tree node from the tree.
-     */
-    protected void deleteThis()
-    {
-        println("DATA: " + data);
-        if( bigger != null )
-        {
-            // Bigger - swap key
-            BSTlex smallest = bigger.findSmallest();
-            data = smallest.swapKey( data );
-
-            if( smallest.bigger != null )
-            {
-                bigger = smallest.bigger;
-            }
-        }
-        else if( smaller != null )
-        {
-            // Has smaller - swap key
-            BSTlex biggest = smaller.findBiggest();
-            data = biggest.swapKey( data );
-
-            if( biggest.smaller != null )
-            {
-                smaller = biggest.smaller;
-            }
-        }
-
-        // Remove Node
-        if( parent != null )
-        {
-            // Leaf
-            if( parent.smaller == this )
-            {
-                parent.smaller = null;
-            }
-            else if( parent.bigger == this )
-            {
-                parent.bigger = null;
-            }
-            parent = null;
-        }
-        else if( parent == null )
-        {
-            // Leaf with no parent - i.e. root
-            data = null;
-        }
     }
 
     protected BSTlex findSmallest()
@@ -267,6 +231,24 @@ public class BSTlex
         String temp = data;
         data = key;
         return data;
+    }
+
+    /**
+     *  @brief Returns the amount of children in the tree node.
+     *  @return The amount of children in the tree node.
+     */
+    protected int childCount()
+    {
+        int count = 0;
+        if( smaller != null )
+        {
+            count++;
+        }
+        if( bigger != null )
+        {
+            count++;
+        }
+        return count;
     }
 
     // ----------------- Connections ------------------
