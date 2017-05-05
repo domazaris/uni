@@ -149,24 +149,26 @@ public class BSTlex
             else if( childCount() == 2 )
             {
             }
-
-            // Final removal - removing parent and data
-            if( parent != null )
+            else
             {
-                if( parent.smaller == this )
+                // No children
+                if( parent != null )
                 {
-                    parent.smaller = null;
+                    if( parent.smaller == this )
+                    {
+                        parent.smaller = null;
+                    }
+                    else if( parent.bigger == this )
+                    {
+                        parent.bigger = null;
+                    }
                 }
-                else if( parent.bigger == this )
-                {
-                    parent.bigger = null;
-                }
-            }
-            parent = null;
-            data = null;
+                parent = null;
 
-            parent = null;
-            data = null;
+            }
+
+            // TODO: Add this back in
+//             data = null;
         }
     }
 
