@@ -20,7 +20,12 @@ public class BSTlex
         if( data == null )
         {
             data = key;
+            print(data + " ");
             return;
+        }
+        else
+        {
+            print(data + " ");
         }
 
         // Return if the key is in the tree
@@ -112,7 +117,12 @@ public class BSTlex
         {
             return;
         }
+        else
+        {
+            print(data + " ");
+        }
 
+        // Compare
         int cmp = data.compareTo( key );
 
         // Not this node, find the key
@@ -144,9 +154,6 @@ public class BSTlex
             {
                 deleteNoChildren();
             }
-
-            // TODO: Add this back in
-            data = null;
         }
     }
 
@@ -165,6 +172,7 @@ public class BSTlex
             }
         }
         parent = null;
+        data = null;
     }
 
     private void deleteOneChild()
@@ -188,7 +196,6 @@ public class BSTlex
         }
         else
         {
-            println("DELETEING: " + data);
             if( smaller != null )
             {
                 if( parent.smaller == this )
@@ -199,6 +206,7 @@ public class BSTlex
                 {
                     parent.bigger = smaller;
                 }
+                smaller.parent = parent;
             }
             else if (bigger != null)
             {
@@ -210,12 +218,20 @@ public class BSTlex
                 {
                     parent.bigger = bigger;
                 }
+                bigger.parent = parent;
             }
         }
     }
 
     private void deleteTwoChildren()
     {
+        // Swap data with smallest in big tree
+        String temp = data;
+        BSTlex pivot = bigger.findSmallest();
+        data = pivot.swapKey( data );
+
+        // Remove the pivot ( will be a leaf )
+        pivot.delete( temp );
     }
 
     /**
@@ -249,6 +265,11 @@ public class BSTlex
     private void println(String line)
     {
         System.out.println(line);
+    }
+
+    private void print(String line)
+    {
+        System.out.print(line);
     }
 
     protected BSTlex findSmallest()
