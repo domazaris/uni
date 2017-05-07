@@ -42,6 +42,7 @@ public class BSTlex
             if( bigger == null )
             {
                 // No bigger, create a bigger
+                print(key + " ");
                 bigger = new BSTlex( key, this );
                 return;
             }
@@ -56,6 +57,7 @@ public class BSTlex
             if( smaller == null )
             {
                 // No smaller, create a smaller
+                print(key + " ");
                 smaller = new BSTlex( key, this );
                 return;
             }
@@ -231,7 +233,7 @@ public class BSTlex
         data = pivot.swapKey( data );
 
         // Remove the pivot ( will be a leaf )
-        pivot.delete( temp );
+        pivot.deleteNoChildren();
     }
 
     /**
@@ -250,7 +252,7 @@ public class BSTlex
         // Print self/middle
         if( data != null)
         {
-            println(data);
+            print(data);
         }
 
         // Print big

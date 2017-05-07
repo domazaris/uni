@@ -30,7 +30,7 @@ public class OddWords
             while( ( line = reader.readLine() ) != null )
             {
                 // Split into words
-                String[] words = line.replaceAll("[^a-zA-Z ]", "").split("\\s+");
+                String[] words = line.replaceAll("[^a-zA-Z ]", " ").split("\\s+");
 
                 // Iterate words array
                 for( int i = 0; i < words.length; i++ )
@@ -42,6 +42,7 @@ public class OddWords
                     if( ! lex.find( word ) )
                     {
                         // Insert
+                        out("ADD: " + word + "\t");
                         lex.insert( word );
                         out("ADDED\n");
                     }
