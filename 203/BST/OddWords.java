@@ -42,7 +42,6 @@ public class OddWords
                     if( ! lex.find( word ) )
                     {
                         // Insert
-                        out("ADD: " + word + "\t");
                         lex.insert( word );
                         out("ADDED\n");
                     }
@@ -56,7 +55,7 @@ public class OddWords
             }
 
             // Print "LEXICON"
-            out("LEXICON\n");
+            out("LEXICON:\n");
 
             // Print remainder of list
             lex.printAll();

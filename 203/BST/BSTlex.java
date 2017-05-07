@@ -115,11 +115,21 @@ public class BSTlex
      */
     public void delete( String key )
     {
+        // delete
+        delete( key, false );
+    }
+
+        /**
+     *  @brief Removes a key from the tree
+     *  @param key The key to remove.
+     */
+    protected void delete( String key, Boolean quiet )
+    {
         if( data == null )
         {
             return;
         }
-        else
+        else if( !quiet )
         {
             print(data + " ");
         }
@@ -186,14 +196,14 @@ public class BSTlex
             {
                 // Swap root with smaller
                 String temp = data;
-                data = smaller.swapKey( data );
-                smaller.delete( temp );
+                data = smaller.swapKey( temp );
+                smaller.delete( temp, true );
             }
             else if( bigger != null)
             {
                 String temp = data;
-                data = bigger.swapKey( data );
-                bigger.delete( temp );
+                data = bigger.swapKey( temp );
+                bigger.delete( temp, true );
             }
         }
         else
@@ -222,6 +232,10 @@ public class BSTlex
                 }
                 bigger.parent = parent;
             }
+            parent = null;
+            smaller = null;
+            bigger = null;
+            data = null;
         }
     }
 
@@ -230,10 +244,10 @@ public class BSTlex
         // Swap data with smallest in big tree
         String temp = data;
         BSTlex pivot = bigger.findSmallest();
-        data = pivot.swapKey( data );
+        data = pivot.swapKey( temp );
 
         // Remove the pivot ( will be a leaf )
-        pivot.deleteNoChildren();
+        pivot.delete( temp, true );
     }
 
     /**
