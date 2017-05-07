@@ -252,7 +252,7 @@ public class BSTlex
         // Print self/middle
         if( data != null)
         {
-            print(data);
+            print(data + "\n");
         }
 
         // Print big
