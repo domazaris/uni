@@ -77,13 +77,12 @@ public class Hashtable
 
     public float performance()
     {
-        ++probe_count;
         return probe_count / op_count;
     }
 
     private void incrementLoad()
     {
-        load++;
+        ++load;
         if( load > ( size * 0.8 ) )
         {
             System.err.println("LOAD OVER 80");
