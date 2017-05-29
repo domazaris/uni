@@ -19,6 +19,11 @@ public class Hashtable
         load = 0;
     }
 
+    public float load()
+    {
+        return load / size;
+    }
+
     public void put( int k, String s )
     {
         ++op_count;
@@ -82,12 +87,7 @@ public class Hashtable
 
     private void incrementLoad()
     {
-        ++load;
-        if( load > ( size * 0.8 ) )
-        {
-            System.err.println("LOAD OVER 80");
-            System.exit(0);
-        }
+        load += 1;
     }
 
     private int rehashLinear( int k, int hc )
