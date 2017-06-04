@@ -21,7 +21,7 @@ public class Hashtable
 
     public float load()
     {
-        return load / size;
+        return (float)load / (float)size;
     }
 
     public void put( int k, String s )
@@ -37,7 +37,7 @@ public class Hashtable
             {
                 hc = rehashLinear( k, hc );
             }
-            else if( type.equals("L") )
+            else if( type.equals("K") )
             {
                 hc = rehashKey( k, hc );
             }
