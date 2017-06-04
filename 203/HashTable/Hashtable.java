@@ -45,7 +45,7 @@ public class Hashtable
 
         // Empty slot, put
         table[ hc ] = new Entry( k, s );
-        incrementLoad();
+        load += 1;
     }
 
     public String get( int k )
@@ -82,15 +82,10 @@ public class Hashtable
 
     public float performance()
     {
-        return probe_count / op_count;
+        return (float)probe_count / (float)op_count;
     }
 
-    private void incrementLoad()
-    {
-        load += 1;
-    }
-
-    private int rehashLinear( int k, int hc )
+   private int rehashLinear( int k, int hc )
     {
         ++probe_count;
         return ( hc + 1 ) % size;
