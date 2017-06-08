@@ -1,14 +1,16 @@
 public class Hashtable
 {
+    // Table
     private Entry [] table;
     private int size;
     private String type;
-
     private int op_count;
     private int probe_count;
-
     private int load;
 
+    /**
+     * Constructor
+     */
     public Hashtable( int s, String t )
     {
         table = new Entry[ s ];
@@ -19,11 +21,17 @@ public class Hashtable
         load = 0;
     }
 
+    /**
+     * Returns the load of the table.
+     */
     public float load()
     {
         return (float)load / (float)size;
     }
 
+    /**
+     * Add item to table.
+     */
     public void put( int k, String s )
     {
         ++op_count;
@@ -48,6 +56,9 @@ public class Hashtable
         load += 1;
     }
 
+    /**
+     * Retrieve item from table.
+     */
     public String get( int k )
     {
         ++op_count;
@@ -80,17 +91,26 @@ public class Hashtable
         return null;
     }
 
+    /**
+     * Returns the performance of the table.
+     */
     public float performance()
     {
         return (float)probe_count / (float)op_count;
     }
 
+    /**
+     * rehash the item with linear probing.
+     */
    private int rehashLinear( int k, int hc )
     {
         ++probe_count;
         return ( hc + 1 ) % size;
     }
 
+    /**
+     * rehash the item with key offset probing.
+     */
     private int rehashKey( int k, int hc )
     {
         ++probe_count;
@@ -98,6 +118,9 @@ public class Hashtable
         return ( hc + offset ) % size;
     }
 
+    /**
+     * Private class to represent a table entry.
+     */
     private class Entry
     {
         public Entry( int k, String s )
