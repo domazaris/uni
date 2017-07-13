@@ -1,3 +1,9 @@
+/**
+ * Author:   Dominic Azaris
+ * ID:       1297845
+ * Username: djmha1
+ */
+
 #include <stdio.h>
 #include <sys/mman.h>
 #include <errno.h>
