@@ -63,7 +63,7 @@ int main() {
 
         // Get the command input
         char* cmd = malloc( 256 );
-        char* params[ 256 ] = {};
+        char* params[ 256 ] = { NULL };
 
         if( get_cmd( cmd, params ) == 1 ) 
         {
