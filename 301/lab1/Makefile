@@ -1,9 +1,11 @@
-all: main.c
-	gcc main.c -Wall -pedantic -o lab1
+all: cmd reverse
 
-debug: main.c
-	gcc main.c -Wall -pedantic -g -o lab1
+cmd: cmd.c
+	gcc cmd.c -Wall -pedantic -o cmd
+
+reverse: reverse.c
+	gcc reverse.c -Wall -pedantic -o reverse
 
 clean:
-	rm -rf lab1
-	rm -rf lab1.dSYM
+	rm -rf cmd
+	rm -rf reverse
