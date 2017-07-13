@@ -20,7 +20,7 @@ int get_cmd( char* cmd, char* params[] ) {
   size_t len;
   fflush(stdin);
   int err = getline( &input, &len, stdin);
-  if( err <= 1 ) {
+  if( err == -1 ) {
     //printf("no line\n");
     return 1;
   }
