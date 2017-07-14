@@ -12,6 +12,13 @@
 #include <errno.h>
 #include <stdlib.h>
 
+volatile int running = 1;
+void intHandler( int d ) 
+{
+    fprintf( stderr, "\nExiting...\n" );
+    running = 0;
+}
+
 void prompt() 
 {
     fprintf( stdout, "CMD $ " );
@@ -31,6 +38,7 @@ int get_cmd( char* cmd, char* params[] )
     if( err <= 1 ) 
     {
         //printf("no line\n");
+        free( input );
         return 1;
     }
 
@@ -54,15 +62,20 @@ int get_cmd( char* cmd, char* params[] )
     return 0;
 }
 
-int main() {
+int main() 
+{
+    signal(SIGINT, intHandler);
+
     // Iterate forever
-    while( 1 ) 
+    char* cmd = malloc( 256 );
+    while( running ) 
     {
+        memset( cmd, 0, 256 );
+
         // Prompt user
         prompt();
 
         // Get the command input
-        char* cmd = malloc( 256 );
         char* params[ 256 ] = { NULL };
 
         if( get_cmd( cmd, params ) == 1 ) 
@@ -76,10 +89,14 @@ int main() {
         {
             // Wait for child to finish
             waitpid( -1, NULL, 0 );
-            free( cmd );
         }
         else 
         {
+            if( ! running )
+            {
+                break;
+            }
+
             // Replace the child process with the given command
             execvp( cmd, params );
 
@@ -88,5 +105,6 @@ int main() {
             fprintf( stderr, "ERROR: %s\n", strerror( errno ) );
         }
     }
+    free( cmd );
     return 0;
 }
