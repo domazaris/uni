@@ -15,8 +15,11 @@
 volatile int running = 1;
 void intHandler( int d ) 
 {
-    fprintf( stderr, "\nExiting...\n" );
-    running = 0;
+    if( running )
+    {
+        fprintf( stderr, "\nExiting...\n" );
+        running = 0;
+    }
 }
 
 void prompt() 
