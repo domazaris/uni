@@ -3,21 +3,21 @@
 import argparse
 
 INSTRUCTIONS = {
-                   "add"  : ["0000", "dddd", "ssss", "0000", "0000", "0000", "0000", "tttt"]#,
-                #    "sub"  : "0000 dddd ssss 0010 0000 0000 0000 tttt",
-                #    "and"  : "0000 dddd ssss 1011 0000 0000 0000 tttt",
-                #    "xor"  : "0000 dddd ssss 1111 0000 0000 0000 tttt",
-                #    "or"   : "0000 dddd ssss 1101 0000 0000 0000 tttt",
-                #    "addi" : "0001 dddd ssss 0000 iiii iiii iiii iiii",
-                #    "subi" : "0001 dddd ssss 0000 iiii iiii iiii iiii",
-                #    "andi" : "0001 dddd ssss 0000 iiii iiii iiii iiii",
-                #    "xori" : "0001 dddd ssss 0000 iiii iiii iiii iiii",
-                #    "ori"  : "0001 dddd ssss 0000 iiii iiii iiii iiii",
-                #    "lw"   : "1000 dddd ssss iiii iiii iiii iiii iiii",
-                #    "sw"   : "1001 dddd ssss iiii iiii iiii iiii iiii",
-                #    "j"    : "0100 0000 0000 iiii iiii iiii iiii iiii",
-                #    "bnez" : "1011 0000 ssss iiii iiii iiii iiii iiii",
-                #    "beqz" : "1010 0000 ssss iiii iiii iiii iiii iiii"
+                   "add"  : ["0000", "dddd", "ssss", "0000", "0000", "0000", "0000", "tttt"],
+                   "sub"  : ["0000", "dddd", "ssss", "0010", "0000", "0000", "0000", "tttt"],
+                   "and"  : ["0000", "dddd", "ssss", "1011", "0000", "0000", "0000", "tttt"],
+                   "xor"  : ["0000", "dddd", "ssss", "1111", "0000", "0000", "0000", "tttt"],
+                   "or"   : ["0000", "dddd", "ssss", "1101", "0000", "0000", "0000", "tttt"],
+                   "addi" : ["0001", "dddd", "ssss", "0000", "iiii", "iiii", "iiii", "iiii"],
+                   "subi" : ["0001", "dddd", "ssss", "0000", "iiii", "iiii", "iiii", "iiii"],
+                   "andi" : ["0001", "dddd", "ssss", "0000", "iiii", "iiii", "iiii", "iiii"],
+                   "xori" : ["0001", "dddd", "ssss", "0000", "iiii", "iiii", "iiii", "iiii"],
+                   "ori"  : ["0001", "dddd", "ssss", "0000", "iiii", "iiii", "iiii", "iiii"],
+                   "lw"   : ["1000", "dddd", "ssss", "iiii", "iiii", "iiii", "iiii", "iiii"],
+                   "sw"   : ["1001", "dddd", "ssss", "iiii", "iiii", "iiii", "iiii", "iiii"],
+                   "j"    : ["0100", "0000", "0000", "iiii", "iiii", "iiii", "iiii", "iiii"],
+                   "bnez" : ["1011", "0000", "ssss", "iiii", "iiii", "iiii", "iiii", "iiii"],
+                   "beqz" : ["1010", "0000", "ssss", "iiii", "iiii", "iiii", "iiii", "iiii"]
                }
 
 def main():
@@ -49,7 +49,21 @@ def main():
     for line in cleaned_lines:
         keyword = line.split()[0]
         try:
-            output.append(" ".join(INSTRUCTIONS[keyword]))
+            out = INSTRUCTIONS[keyword]
+            if out[0] == "0000":
+                out[1] = "xxxx"
+                out[2] = "xxxx"
+                out[7] = "xxxx"
+            elif out[0] == "0001" or out[0] == "1000" or out[0] == "1001":
+                out[1] = "zzzz"
+                out[2] = "zzzz"
+            elif out[0] == "0100":
+                pass
+            elif out[0] == "1011" or out[0] == "1010":
+                out[2] = "cccc"
+            
+            # Store the new output line
+            output.append(" ".join(out))
         except KeyError:
             output.append('err: ' + keyword)
             # print("ERROR Unrecognized instruction: " + keyword)
@@ -57,11 +71,10 @@ def main():
             pass
 
     # Output into new file
-    with open(args.input_file + ".output", "w") as ofile:
+    with open(args.input_file.split(".")[0] + ".output", "w") as ofile:
         for line in output:
             print(line)
             ofile.write(line + "\n")
-
 
 if __name__ == "__main__":
     main()
