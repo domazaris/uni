@@ -154,11 +154,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-## Code for gettings parts of array
-# array = ['1', '2', '3', '4']
-# print(array[1:])
