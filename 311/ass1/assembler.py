@@ -22,7 +22,7 @@ INSTRUCTIONS = {
 
 def space_out(string, length):
     ''' Adds a space every `length` characters '''
-    return ' '.join(string[i:i+length] for i in range(0, len(string), length))
+    return " ".join(string[i:i+length] for i in range(0, len(string), length))
 
 def main():
     ''' main method '''
