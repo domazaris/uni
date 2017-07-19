@@ -51,12 +51,9 @@ def main():
             cleaned_lines.append(line)
 
     # Parse labels and add to a map
-    PROGRAM_COUNTER = 0
+    PROGRAM_COUNTER = 1
     LABELS = {}
     for line in cleaned_lines:
-        # Fetched cmd, now increment pc
-        PROGRAM_COUNTER += 1
-
         # Split line to get the operand
         operand = line.split()[0]
 
@@ -64,6 +61,9 @@ def main():
             # Found a label, add it to the map
             label = str(operand.split(":")[0])
             LABELS[label] = PROGRAM_COUNTER
+        else:
+            # PC only increments when not a label
+            PROGRAM_COUNTER += 1
 
     # Parse for instructions
     PROGRAM_COUNTER = 0

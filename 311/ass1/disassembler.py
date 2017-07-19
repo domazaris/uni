@@ -4,39 +4,61 @@ import argparse
 
 INSTRUCTIONS = {
     "0000" : {
-        "0000" : "add",
-        "0010" : "sub",
-        "1011" : "and",
-        "1111" : "xor",
-        "1101" : "or"
+        "0000" : "add ",
+        "0010" : "sub ",
+        "1011" : "and ",
+        "1111" : "xor ",
+        "1101" : "or "
     },
     "0001" : {
-        "0000" : "addi",
-        "0010" : "subi",
-        "1011" : "andi",
-        "1111" : "xori",
+        "0000" : "addi ",
+        "0010" : "subi ",
+        "1011" : "andi ",
+        "1111" : "xori ",
         "1101" : "ori"
     },
-    "1000" : "lw",
-    "1001" : "sw",
-    "0100" : "j",
-    "1011" : "bnez",
-    "1010" : "beqz"
+    "1000" : "lw ",
+    "1001" : "sw ",
+    "0100" : "j ",
+    "1011" : "bnez ",
+    "1010" : "beqz "
 }
 
 
-def scan_labels(ilines)
+def scan_labels(ilines):
+    
+    # For each line check if there is a label reference
+    labels = {}
+    label_count = 0
+    for line in ilines:
+        if line and (not line.isspace()):
+            # Check if instruction mentions a label
+            words = line.split()
+            if words[0] == "0100" or words[0] == "1011" or words[0] == "1010":
+                addr = "".join(words[3:])
+                if addr not in labels.keys():
+                    # The addr doesnt exists
+                    pc = int(addr, 2)
+                    labels[pc] = "L" + str(label_count)
+                    label_count += 1
+    return labels
 
 def convert(ilines, labels):
     ''' Converts machine code line to WRAMP '''
-    LABELS = {}
-    LABEL_COUNT = 0
+    pc = 0
     for line in ilines:
         if line and (not line.isspace()):
+            output_line = []
             words = line.split()
 
+            pc += 1            
+            # Check if there is a label for this PC
+            if pc in labels.keys():
+                output_line.append(labels[pc] + ":")
+                print("".join(output_line))
+                output_line = []
+
             # Find instruction
-            output_line = []
             key = words[0]
             instruct = INSTRUCTIONS[key]
             if not isinstance(instruct, str):
@@ -80,20 +102,12 @@ def convert(ilines, labels):
                 else:
                     # Labels
                     addr = "".join(words[3:])
-                    try:
-                        label = LABELS[addr]
-                        output_line.append(label)
-                    except KeyError:
-                        # New label
-                        label = "L" + str(LABEL_COUNT)
-                        output_line.append(label)
+                    addr_dec = int(addr, 2)
 
-                        # Add to map
-                        LABELS[addr] = label
-                        LABEL_COUNT += 1
+                    label = labels[addr_dec]
+                    output_line.append(label)
 
-
-            output_line = " ".join(output_line)
+            output_line = "".join(output_line)
             print(output_line)
 
 def main():
