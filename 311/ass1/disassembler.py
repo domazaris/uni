@@ -24,9 +24,8 @@ INSTRUCTIONS = {
     "1010" : "beqz "
 }
 
-
 def scan_labels(ilines):
-    
+    ''' Scans the given lines for labels and returns a dictionary of them '''
     # For each line check if there is a label reference
     labels = {}
     label_count = 0
@@ -38,24 +37,24 @@ def scan_labels(ilines):
                 addr = "".join(words[3:])
                 if addr not in labels.keys():
                     # The addr doesnt exists
-                    pc = int(addr, 2)
-                    labels[pc] = "L" + str(label_count)
+                    program_counter = int(addr, 2)
+                    labels[program_counter] = "L" + str(label_count)
                     label_count += 1
     return labels
 
 def convert(ilines, labels):
     ''' Converts machine code line to WRAMP '''
     output = []
-    pc = 0
+    program_counter = 0
     for line in ilines:
         if line and (not line.isspace()):
             output_line = []
             words = line.split()
 
-            pc += 1            
+            program_counter += 1
             # Check if there is a label for this PC
-            if pc in labels.keys():
-                output_line.append(labels[pc] + ":")
+            if program_counter in labels.keys():
+                output_line.append(labels[program_counter] + ":")
                 output.append("".join(output_line))
                 output_line = []
 
@@ -108,8 +107,7 @@ def convert(ilines, labels):
                     label = labels[addr_dec]
                     output_line.append(label)
 
-            output_line = "".join(output_line)
-            output.append(output_line)
+            output.append("".join(output_line))
     return output
 
 def main():
@@ -138,7 +136,6 @@ def main():
     # Output to file
     with open(args.input_file.split(".")[0] + ".dis", "w") as ofile:
         for line in output:
-            print(line)
             ofile.write(line + "\n")
 
 if __name__ == "__main__":

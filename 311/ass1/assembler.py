@@ -47,7 +47,6 @@ def main():
         line = line.lstrip()
         line = line.split("#")[0]
         if line and (not line.isspace()):
-            # print(line)
             cleaned_lines.append(line)
 
     # Parse labels and add to a map
@@ -152,7 +151,6 @@ def main():
     # Output into new file
     with open(args.input_file.split(".")[0] + ".bin", "w") as ofile:
         for line in output:
-            print(line)
             ofile.write(line + "\n")
 
 if __name__ == "__main__":
