@@ -45,6 +45,7 @@ def scan_labels(ilines):
 
 def convert(ilines, labels):
     ''' Converts machine code line to WRAMP '''
+    output = []
     pc = 0
     for line in ilines:
         if line and (not line.isspace()):
@@ -55,7 +56,7 @@ def convert(ilines, labels):
             # Check if there is a label for this PC
             if pc in labels.keys():
                 output_line.append(labels[pc] + ":")
-                print("".join(output_line))
+                output.append("".join(output_line))
                 output_line = []
 
             # Find instruction
@@ -108,7 +109,8 @@ def convert(ilines, labels):
                     output_line.append(label)
 
             output_line = "".join(output_line)
-            print(output_line)
+            output.append(output_line)
+    return output
 
 def main():
     ''' main method '''
@@ -127,8 +129,17 @@ def main():
         print("ERROR File Not Found: " + args.input_file)
         exit(1)
 
+    # get the pc of each label
     labels = scan_labels(ilines)
-    convert(ilines, labels)
+
+    # Convert the machine code to WRAMP
+    output = convert(ilines, labels)
+
+    # Output to file
+    with open(args.input_file.split(".")[0] + ".dis", "w") as ofile:
+        for line in output:
+            print(line)
+            ofile.write(line + "\n")
 
 if __name__ == "__main__":
     main()

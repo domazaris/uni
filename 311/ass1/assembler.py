@@ -150,7 +150,7 @@ def main():
         output.append(" ".join(out))
 
     # Output into new file
-    with open(args.input_file.split(".")[0] + ".output", "w") as ofile:
+    with open(args.input_file.split(".")[0] + ".bin", "w") as ofile:
         for line in output:
             print(line)
             ofile.write(line + "\n")
