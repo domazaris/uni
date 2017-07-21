@@ -134,7 +134,8 @@ def main():
     output = convert(ilines, labels)
 
     # Output to file
-    with open(args.input_file.split(".")[0] + ".dis", "w") as ofile:
+    ofile_name = args.input_file.split("/")[-1].split(".")[0] + ".s"
+    with open(ofile_name, "w") as ofile:
         for line in output:
             ofile.write(line + "\n")
 

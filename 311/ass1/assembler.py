@@ -87,42 +87,72 @@ def main():
             optargs = line.split()[1].split(",")
 
             # Destination
-            out[1] = "{0:04b}".format(int(optargs[0][1:]))
+            out[1] = "{0:04b}".format(int(optargs[0][1:], 10))
 
             # Sources
-            out[2] = "{0:04b}".format(int(optargs[1][1:]))
-            out[7] = "{0:04b}".format(int(optargs[2][1:]))
+            out[2] = "{0:04b}".format(int(optargs[1][1:], 10))
+            out[7] = "{0:04b}".format(int(optargs[2][1:], 10))
 
         elif out[0] == "0001" or out[0] == "1000" or out[0] == "1001":
             # Get the optargs
             optargs = line.split()[1].split(",")
 
             # Destination
-            out[1] = "{0:04b}".format(int(optargs[0][1:]))
+            out[1] = "{0:04b}".format(int(optargs[0][1:], 10))
 
             # Source
-            out[2] = "{0:04b}".format(int(optargs[1][1:]))
+            preaddr = None
+            if out[0] == "0001":
+                out[2] = "{0:04b}".format(int(optargs[1][1:], 10))
+                preaddr = optargs[2]
 
-            # Get the address and convert to binary
-            preaddr = optargs[2]
-            addr = None
-            if "0b" in preaddr:
-                addr = "{0:016b}".format(int(preaddr[2:]))
-            elif "0x" in preaddr:
-                hex_addr = int(preaddr[2:], 16)
-                addr = "{0:016b}".format(hex_addr)
+                # Get the address and convert to binary
+                addr = None
+                if "0b" in preaddr:
+                    addr = "{0:016b}".format(int(preaddr[2:]))
+                elif "0x" in preaddr:
+                    hex_addr = int(preaddr[2:], 16)
+                    addr = "{0:016b}".format(hex_addr)
+                else:
+                    addr = "{0:016b}".format(int(preaddr))
+
+                # add split up and add to the output
+                addr = space_out(addr, 4)
+                for val in range(4, 8):
+                    out[val] = addr.split()[val - 4]
+
             else:
-                addr = "{0:016b}".format(int(preaddr))
+                imm = optargs[1].split("(")[0].split("-")[-1]
+                src = optargs[1].split("$")[-1].split(")")[0]
+                
+                src = "{0:04b}".format(int(src))
+                out[2] = src
+                preaddr = imm
 
-            # add split up and add to the output
-            addr = space_out(addr, 4)
-            for val in range(4, 8):
-                out[val] = addr.split()[val - 4]
+                # Get the address and convert to binary
+                addr = None
+                if "0b" in preaddr:
+                    addr = "{0:020b}".format(int(preaddr[2:]))
+                elif "0x" in preaddr:
+                    hex_addr = int(preaddr[2:], 16)
+                    addr = "{0:020b}".format(hex_addr)
+                else:
+                    addr = "{0:020b}".format(int(preaddr))
+
+                # add split up and add to the output
+                addr = space_out(addr, 4)
+                for val in range(3, 8):
+                    out[val] = addr.split()[val - 4]
 
         elif out[0] == "0100":
             # Jump - convert the pc to binary at the given label
             label = line.split()[1].split(",")[0]
-            addr = "{0:020b}".format(int(LABELS[label]))
+            
+            addr = None
+            try:
+                addr = "{0:020b}".format(int(label))
+            except ValueError:
+                addr = "{0:020b}".format(int(LABELS[label]))
 
             # Split up into 4 bit segments
             addr = space_out(addr, 4)
@@ -134,11 +164,27 @@ def main():
             optargs = line.split()[1].split(",")
 
             # Put register in source field
-            out[2] = "{0:04b}".format(int(optargs[0][1:]))
+            out[2] = "{0:04b}".format(int(optargs[0][1:], 10))
 
             # Get address
             label = optargs[1]
-            addr = "{0:020b}".format(int(LABELS[label]))
+            addr = None
+            try:
+                # Check for regular int
+                decimal = int(label)
+                if decimal < 0:
+                    decimal = PROGRAM_COUNTER - 4
+                addr = "{0:020b}".format(int(decimal))
+            except ValueError:
+                if "0x" in label:
+                    # Check for hex
+                    addr = "{0:020b}".format(int(label, 16))
+                elif "0b" in label:
+                    # Check for binary
+                    addr = "{0:020b}".format(int(label, 2))
+                else:
+                    # Check for labels
+                    addr = "{0:020b}".format(int(LABELS[label]))
 
             # Space out address and add to output
             addr = space_out(addr, 4)
@@ -148,10 +194,20 @@ def main():
         # Store the new output line
         output.append(" ".join(out))
 
+    # Convert each 4bits to a hex character
+    bytes_out = []
+    for line in output:
+        nibbles = line.split(" ")
+        for val in [0, 2, 4, 6]:
+            byte = nibbles[val] + nibbles[val + 1]
+            bytes_out.append(int(byte, 2))
+
+    byte_array = bytearray(bytes_out)
+
     # Output into new file
-    with open(args.input_file.split(".")[0] + ".bin", "w") as ofile:
-        for line in output:
-            ofile.write(line + "\n")
+    ofile_name = args.input_file.split("/")[-1].split(".")[0] + ".bin"
+    with open(ofile_name, "wb") as ofile:
+        ofile.write(byte_array)
 
 if __name__ == "__main__":
     main()
