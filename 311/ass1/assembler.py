@@ -194,15 +194,19 @@ def main():
         # Store the new output line
         output.append(" ".join(out))
 
-    # Convert each 4bits to a hex character
+    # Convert each 8 bits to a byte
     bytes_out = []
     for line in output:
         nibbles = line.split(" ")
-        for val in [0, 2, 4, 6]:
-            byte = nibbles[val] + nibbles[val + 1]
+        print(nibbles)
+        tmp = []
+        for val in [7, 5, 3, 1]:
+            byte = nibbles[val - 1] + nibbles[val]
             bytes_out.append(int(byte, 2))
-
+            tmp.append(int(byte, 2))
+        print(bytearray(tmp))
     byte_array = bytearray(bytes_out)
+    print(byte_array)
 
     # Output into new file
     ofile_name = args.input_file.split("/")[-1].split(".")[0] + ".bin"
