@@ -1,7 +1,10 @@
 #! /usr/bin/python3
-''' Disassembles machine code into WRAMPcode '''
+''' Disassembles machine code into WRAMP code '''
 import argparse
 import struct
+
+MAX_IMM = int("11111111111111111111", 2)
+
 INSTRUCTIONS = {
     "0000" : {
         "0000" : "add ",
@@ -29,15 +32,30 @@ def scan_labels(ilines):
     # For each line check if there is a label reference
     labels = {}
     label_count = 0
+    counter = 1
     for line in ilines:
         # Check if instruction mentions a label
         if line[0] == "0100" or line[0] == "1011" or line[0] == "1010":
             addr = "".join(line[3:])
+
             if addr not in labels.keys():
                 # The addr doesnt exists
                 program_counter = int(addr, 2)
+                
+                # If branch instruction
+                if line[0] == "1011" or line[0] == "1010":
+                    program_counter = program_counter + counter - MAX_IMM
+                    if program_counter < 0:
+                        program_counter += MAX_IMM + 1
+                    elif program_counter > len(ilines):
+                        program_counter -= MAX_IMM + 1
+
+                # Add label to dictionary
                 labels[program_counter] = "L" + str(label_count)
                 label_count += 1
+        counter += 1
+
+    print(labels)
     return labels
 
 def convert(ilines, labels):
@@ -46,16 +64,11 @@ def convert(ilines, labels):
     program_counter = 0
     for line in ilines:
         output_line = []
+        program_counter += 1
 
         # Check if there is a label for this PC
         if program_counter in labels.keys():
-            output_line.append(labels[program_counter] + ":")
-            output.append("".join(output_line))
-            output_line = []
-            program_counter += 1
-            continue
-
-        program_counter += 1
+            output.append(labels[program_counter] + ":")
 
         # Find instruction
         key = line[0]
@@ -103,6 +116,14 @@ def convert(ilines, labels):
                 addr = "".join(line[3:])
                 addr_dec = int(addr, 2)
 
+                 # If branch instruction (relative)
+                if line[0] == "1011" or line[0] == "1010":
+                    addr_dec = addr_dec + program_counter - MAX_IMM
+                    if addr_dec < 0:
+                        addr_dec += MAX_IMM + 1
+                    elif addr_dec > len(ilines):
+                        addr_dec -= MAX_IMM + 1
+                
                 label = labels[addr_dec]
                 output_line.append(label)
 
@@ -147,14 +168,12 @@ def main():
     # Convert the machine code to WRAMP
     output = convert(lines, labels)
 
-    for _ in output:
-        print(_)
-
-    # # Output to file
-    # ofile_name = args.input_file.split("/")[-1].split(".")[0] + ".s"
-    # with open(ofile_name, "w") as ofile:
-    #     for line in output:
-    #         ofile.write(line + "\n")
+    # Output to file
+    ofile_name = args.input_file.split("/")[-1].split(".")[0] + ".s"
+    with open(ofile_name, "w") as ofile:
+        for line in output:
+            print(line)
+            ofile.write(line + "\n")
 
 if __name__ == "__main__":
     main()
