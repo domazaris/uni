@@ -72,7 +72,14 @@ def convert(ilines, labels):
 
         # Find instruction
         key = line[0]
-        instruct = INSTRUCTIONS[key]
+
+        try:
+            instruct = INSTRUCTIONS[key]
+        except KeyError:
+            # Can't find key, use .word
+            output.append(".word " + hex(int("".join(line), 2)))
+            continue
+
         if not isinstance(instruct, str):
             key = line[3]
             output_line.append(instruct[key])
