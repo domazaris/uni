@@ -80,6 +80,16 @@ def main():
         # Fetched cmd, now increment pc
         PROGRAM_COUNTER += 1
 
+        # Check for .word
+        if ".word" in operand:
+            word = line.split()[-1]
+            
+            # Convert
+            word = int(word[2:], 16)
+            out = space_out("{0:032b}".format(word), 4)
+            output.append(out)
+            continue
+
         # Load machine code template
         out = INSTRUCTIONS[operand]
 
