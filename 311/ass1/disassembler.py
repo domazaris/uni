@@ -18,7 +18,7 @@ INSTRUCTIONS = {
         "0010" : "subi ",
         "1011" : "andi ",
         "1111" : "xori ",
-        "1101" : "ori"
+        "1101" : "ori "
     },
     "1000" : "lw ",
     "1001" : "sw ",
@@ -51,11 +51,11 @@ def scan_labels(ilines):
                         program_counter -= MAX_IMM + 1
 
                 # Add label to dictionary
-                labels[program_counter] = "L" + str(label_count)
-                label_count += 1
+                if not program_counter > len(ilines):
+                    labels[program_counter] = "L" + str(label_count)
+                    label_count += 1
         counter += 1
 
-    print(labels)
     return labels
 
 def convert(ilines, labels):
@@ -99,19 +99,26 @@ def convert(ilines, labels):
             output_line.append(hex(int("".join(line[4:]), 2)))
 
         else:
-            # Destinations
-            if line[0] == "1000" and line[0] == "1001":
+            # Values/Labels
+            if line[0] == "1000" or line[0] == "1001":
+                # Destination
                 output_line.append("$" + str(int(line[1], 2)) + ",")
 
-            # Sources
-            if line[0] != "0100":
+                # Stack
+                addr = "".join(line[3:])
+                stack = int(addr, 2)
+                if stack > (MAX_IMM / 2):
+                    stack -= MAX_IMM + 1
+                
+                # Register
+                register = "($" + str(int(line[2], 2)) + ")"
+
+                output_line.append(str(stack))
+                output_line.append(register)
+            else:
+                # Source
                 output_line.append("$" + str(int(line[2], 2)) + ",")
 
-            # Values/Labels
-            if line[0] == "1000" and line[0] == "1001":
-                # Values
-                output_line.append(hex(int("".join(line[4:]), 2)))
-            else:
                 # Labels
                 addr = "".join(line[3:])
                 addr_dec = int(addr, 2)
@@ -124,8 +131,12 @@ def convert(ilines, labels):
                     elif addr_dec > len(ilines):
                         addr_dec -= MAX_IMM + 1
                 
-                label = labels[addr_dec]
-                output_line.append(label)
+                try:
+                    label = labels[addr_dec]
+                    output_line.append(label)
+                except KeyError:
+                    output_line.append(hex(int(addr, 2)))
+                    
 
         output.append("".join(output_line))
     return output
@@ -155,22 +166,26 @@ def main():
     ''' main method '''
     # Parse args
     parser = argparse.ArgumentParser()
-    parser.add_argument("-f", action="store", type=str, dest="input_file",
+    parser.add_argument("-i", action="store", type=str, dest="input_file",
                         required=True, help="Input file")
+    parser.add_argument("-o", action="store", type=str, dest="output_file",
+                        required=True, help="Output file")
     args = parser.parse_args()
 
     # Read file into variable
     lines = read_file(args.input_file)
+    for _ in lines:
+        print(_)
 
     # get the pc of each label
     labels = scan_labels(lines)
 
     # Convert the machine code to WRAMP
+    print(labels)
     output = convert(lines, labels)
 
     # Output to file
-    ofile_name = args.input_file.split("/")[-1].split(".")[0] + ".s"
-    with open(ofile_name, "w") as ofile:
+    with open(args.output_file, "w") as ofile:
         for line in output:
             print(line)
             ofile.write(line + "\n")

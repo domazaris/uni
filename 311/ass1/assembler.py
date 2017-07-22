@@ -30,8 +30,10 @@ def main():
     ''' main method '''
     # Parse args
     parser = argparse.ArgumentParser()
-    parser.add_argument("-f", action="store", type=str, dest="input_file",
+    parser.add_argument("-i", action="store", type=str, dest="input_file",
                         required=True, help="Input file")
+    parser.add_argument("-o", action="store", type=str, dest="output_file",
+                        required=True, help="Output file")
     args = parser.parse_args()
 
     # Read file into variable
@@ -226,8 +228,7 @@ def main():
     byte_array = bytearray(bytes_out)
 
     # Output into new file
-    ofile_name = args.input_file.split("/")[-1].split(".")[0] + ".bin"
-    with open(ofile_name, "wb") as ofile:
+    with open(args.output_file, "wb") as ofile:
         ofile.write(byte_array)
 
 if __name__ == "__main__":
