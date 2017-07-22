@@ -2,6 +2,8 @@
 ''' Assembles WRAMP code into machine code '''
 import argparse
 
+MAX_IMM = int("11111111111111111111", 2)
+
 INSTRUCTIONS = {
     "add"  : ["0000", "dddd", "ssss", "0000", "0000", "0000", "0000", "tttt"],
     "sub"  : ["0000", "dddd", "ssss", "0010", "0000", "0000", "0000", "tttt"],
@@ -68,15 +70,15 @@ def main():
     PROGRAM_COUNTER = 0
     output = []
     for line in cleaned_lines:
-        # Fetched cmd, now increment pc
-        PROGRAM_COUNTER += 1
-
         # Split line to get the operand
         operand = line.split()[0]
 
         # Skip any labels
         if ":" in operand:
             continue
+
+        # Fetched cmd, now increment pc
+        PROGRAM_COUNTER += 1
 
         # Load machine code template
         out = INSTRUCTIONS[operand]
@@ -109,7 +111,7 @@ def main():
                 # Get the address and convert to binary
                 addr = None
                 if "0b" in preaddr:
-                    addr = "{0:016b}".format(int(preaddr[2:]))
+                    addr = "{0:016b}".format(int(preaddr[2:],2))
                 elif "0x" in preaddr:
                     hex_addr = int(preaddr[2:], 16)
                     addr = "{0:016b}".format(hex_addr)
@@ -122,22 +124,25 @@ def main():
                     out[val] = addr.split()[val - 4]
 
             else:
-                imm = optargs[1].split("(")[0].split("-")[-1]
+                imm = optargs[1].split("(")[0]
                 src = optargs[1].split("$")[-1].split(")")[0]
                 
                 src = "{0:04b}".format(int(src))
                 out[2] = src
-                preaddr = imm
-
+                
                 # Get the address and convert to binary
-                addr = None
-                if "0b" in preaddr:
-                    addr = "{0:020b}".format(int(preaddr[2:]))
-                elif "0x" in preaddr:
-                    hex_addr = int(preaddr[2:], 16)
-                    addr = "{0:020b}".format(hex_addr)
+                addr_int = 0
+                if "0b" in imm:
+                    addr_int = int(imm[2:], 2)
+                elif "0x" in imm:
+                    addr_int = int(imm[2:], 16)
                 else:
-                    addr = "{0:020b}".format(int(preaddr))
+                    addr_int = int(imm)
+                    if addr_int < 0:
+                        addr_int = MAX_IMM + addr_int + 1
+
+                addr = "{0:020b}".format(addr_int)
+                
 
                 # add split up and add to the output
                 addr = space_out(addr, 4)
@@ -160,6 +165,7 @@ def main():
                 out[val] = addr.split()[val - 3]
 
         elif out[0] == "1011" or out[0] == "1010":
+            # Branch ifs
             # Get optargs
             optargs = line.split()[1].split(",")
 
@@ -169,22 +175,30 @@ def main():
             # Get address
             label = optargs[1]
             addr = None
+            addr_int = 0
             try:
                 # Check for regular int
                 decimal = int(label)
-                if decimal < 0:
-                    decimal = PROGRAM_COUNTER - 4
-                addr = "{0:020b}".format(int(decimal))
+                addr_int = int(decimal)
             except ValueError:
                 if "0x" in label:
                     # Check for hex
-                    addr = "{0:020b}".format(int(label, 16))
+                    addr_int = int(label, 16)
                 elif "0b" in label:
                     # Check for binary
-                    addr = "{0:020b}".format(int(label, 2))
+                    addr_int = int(label, 2)
                 else:
-                    # Check for labels
-                    addr = "{0:020b}".format(int(LABELS[label]))
+                    # addr will be relative to pc
+                    addr_int = int(LABELS[label]) - PROGRAM_COUNTER - 1
+            
+            if addr_int < 0:
+                addr_int = MAX_IMM + addr_int + 1
+                # addr_list = list(addr)
+                # addr_list[0] = "1"
+                # addr = "".join(addr_list)
+
+            addr = "{0:020b}".format(addr_int)
+
 
             # Space out address and add to output
             addr = space_out(addr, 4)
@@ -198,15 +212,12 @@ def main():
     bytes_out = []
     for line in output:
         nibbles = line.split(" ")
-        print(nibbles)
         tmp = []
         for val in [7, 5, 3, 1]:
             byte = nibbles[val - 1] + nibbles[val]
             bytes_out.append(int(byte, 2))
             tmp.append(int(byte, 2))
-        print(bytearray(tmp))
     byte_array = bytearray(bytes_out)
-    print(byte_array)
 
     # Output into new file
     ofile_name = args.input_file.split("/")[-1].split(".")[0] + ".bin"
