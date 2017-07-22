@@ -1,7 +1,7 @@
 #! /usr/bin/python3
 ''' Disassembles machine code into WRAMPcode '''
 import argparse
-
+import struct
 INSTRUCTIONS = {
     "0000" : {
         "0000" : "add ",
@@ -30,16 +30,14 @@ def scan_labels(ilines):
     labels = {}
     label_count = 0
     for line in ilines:
-        if line and (not line.isspace()):
-            # Check if instruction mentions a label
-            words = line.split()
-            if words[0] == "0100" or words[0] == "1011" or words[0] == "1010":
-                addr = "".join(words[3:])
-                if addr not in labels.keys():
-                    # The addr doesnt exists
-                    program_counter = int(addr, 2)
-                    labels[program_counter] = "L" + str(label_count)
-                    label_count += 1
+        # Check if instruction mentions a label
+        if line[0] == "0100" or line[0] == "1011" or line[0] == "1010":
+            addr = "".join(line[3:])
+            if addr not in labels.keys():
+                # The addr doesnt exists
+                program_counter = int(addr, 2)
+                labels[program_counter] = "L" + str(label_count)
+                label_count += 1
     return labels
 
 def convert(ilines, labels):
@@ -47,68 +45,90 @@ def convert(ilines, labels):
     output = []
     program_counter = 0
     for line in ilines:
-        if line and (not line.isspace()):
-            output_line = []
-            words = line.split()
+        output_line = []
 
-            program_counter += 1
-            # Check if there is a label for this PC
-            if program_counter in labels.keys():
-                output_line.append(labels[program_counter] + ":")
-                output.append("".join(output_line))
-                output_line = []
-
-            # Find instruction
-            key = words[0]
-            instruct = INSTRUCTIONS[key]
-            if not isinstance(instruct, str):
-                key = words[3]
-                output_line.append(instruct[key])
-            else:
-                output_line.append(instruct)
-
-            # Get sources/destination
-            if words[0] == "0000":
-                # Destination
-                output_line.append("$" + str(int(words[1], 2)) + ",")
-
-                # Sources
-                output_line.append("$" + str(int(words[2], 2)) + ",")
-                output_line.append("$" + str(int(words[7], 2)))
-
-            elif words[0] == "0001":
-                # Destination
-                output_line.append("$" + str(int(words[1], 2)) + ",")
-
-                # Source
-                output_line.append("$" + str(int(words[2], 2)) + ",")
-
-                # imm
-                output_line.append(hex(int("".join(words[4:]), 2)))
-
-            else:
-                # Destinations
-                if words[0] == "1000" and words[0] == "1001":
-                    output_line.append("$" + str(int(words[1], 2)) + ",")
-
-                # Sources
-                if words[0] != "0100":
-                    output_line.append("$" + str(int(words[2], 2)) + ",")
-
-                # Values/Labels
-                if words[0] == "1000" and words[0] == "1001":
-                    # Values
-                    output_line.append(hex(int("".join(words[4:]), 2)))
-                else:
-                    # Labels
-                    addr = "".join(words[3:])
-                    addr_dec = int(addr, 2)
-
-                    label = labels[addr_dec]
-                    output_line.append(label)
-
+        # Check if there is a label for this PC
+        if program_counter in labels.keys():
+            output_line.append(labels[program_counter] + ":")
             output.append("".join(output_line))
+            output_line = []
+            program_counter += 1
+            continue
+
+        program_counter += 1
+
+        # Find instruction
+        key = line[0]
+        instruct = INSTRUCTIONS[key]
+        if not isinstance(instruct, str):
+            key = line[3]
+            output_line.append(instruct[key])
+        else:
+            output_line.append(instruct)
+
+        # Get sources/destination
+        if line[0] == "0000":
+            # Destination
+            output_line.append("$" + str(int(line[1], 2)) + ",")
+
+            # Sources
+            output_line.append("$" + str(int(line[2], 2)) + ",")
+            output_line.append("$" + str(int(line[7], 2)))
+
+        elif line[0] == "0001":
+            # Destination
+            output_line.append("$" + str(int(line[1], 2)) + ",")
+
+            # Source
+            output_line.append("$" + str(int(line[2], 2)) + ",")
+
+            # imm
+            output_line.append(hex(int("".join(line[4:]), 2)))
+
+        else:
+            # Destinations
+            if line[0] == "1000" and line[0] == "1001":
+                output_line.append("$" + str(int(line[1], 2)) + ",")
+
+            # Sources
+            if line[0] != "0100":
+                output_line.append("$" + str(int(line[2], 2)) + ",")
+
+            # Values/Labels
+            if line[0] == "1000" and line[0] == "1001":
+                # Values
+                output_line.append(hex(int("".join(line[4:]), 2)))
+            else:
+                # Labels
+                addr = "".join(line[3:])
+                addr_dec = int(addr, 2)
+
+                label = labels[addr_dec]
+                output_line.append(label)
+
+        output.append("".join(output_line))
     return output
+
+def nibbles(line):
+    ''' Returns an array of nibbles from a given line '''
+    nibbles = [line[i:i+4] for i in range(0, len(line), 4)]
+    return nibbles
+
+def read_file(filename):
+    ''' Reads a file and returns an array of lines of nibbles '''
+    # Read file into variable
+    lines = []
+    try:
+        with open(filename, "rb") as ifile:
+            out = struct.iter_unpack("I", ifile.read())
+            for tup in out:
+                line = "{0:032b}".format(int(str(tup).split("(")[1].split(",")[0]))
+                lines.append(nibbles(line))
+            return lines
+    except FileNotFoundError:
+        print("ERROR File Not Found: " + filename)
+        exit(1)
+
 
 def main():
     ''' main method '''
@@ -119,25 +139,22 @@ def main():
     args = parser.parse_args()
 
     # Read file into variable
-    ilines = None
-    try:
-        with open(args.input_file) as ifile:
-            ilines = ifile.read().split("\n")
-    except FileNotFoundError:
-        print("ERROR File Not Found: " + args.input_file)
-        exit(1)
+    lines = read_file(args.input_file)
 
     # get the pc of each label
-    labels = scan_labels(ilines)
+    labels = scan_labels(lines)
 
     # Convert the machine code to WRAMP
-    output = convert(ilines, labels)
+    output = convert(lines, labels)
 
-    # Output to file
-    ofile_name = args.input_file.split("/")[-1].split(".")[0] + ".s"
-    with open(ofile_name, "w") as ofile:
-        for line in output:
-            ofile.write(line + "\n")
+    for _ in output:
+        print(_)
+
+    # # Output to file
+    # ofile_name = args.input_file.split("/")[-1].split(".")[0] + ".s"
+    # with open(ofile_name, "w") as ofile:
+    #     for line in output:
+    #         ofile.write(line + "\n")
 
 if __name__ == "__main__":
     main()

@@ -153,7 +153,6 @@ def main():
 
                 addr = "{0:020b}".format(addr_int)
                 
-
                 # add split up and add to the output
                 addr = space_out(addr, 4)
                 for val in range(3, 8):
@@ -203,9 +202,6 @@ def main():
             
             if addr_int < 0:
                 addr_int = MAX_IMM + addr_int + 1
-                # addr_list = list(addr)
-                # addr_list[0] = "1"
-                # addr = "".join(addr_list)
 
             addr = "{0:020b}".format(addr_int)
 
