@@ -26,52 +26,74 @@ def space_out(string, length):
     ''' Adds a space every `length` characters '''
     return " ".join(string[i:i+length] for i in range(0, len(string), length))
 
-def main():
-    ''' main method '''
-    # Parse args
+def get_args():
+    ''' Creates a parser and returns args '''
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", action="store", type=str, dest="input_file",
                         required=True, help="Input file")
     parser.add_argument("-o", action="store", type=str, dest="output_file",
                         required=True, help="Output file")
     args = parser.parse_args()
+    return args
 
-    # Read file into variable
+def convert_to_bytes(lines):
+    ''' Converts each 8 bits into a byte from a given string '''
+    bytes_out = []
+    for line in lines:
+        nibbles = line.split(" ")
+        tmp = []
+        for val in [7, 5, 3, 1]:
+            byte = nibbles[val - 1] + nibbles[val]
+            bytes_out.append(int(byte, 2))
+            tmp.append(int(byte, 2))
+    byte_array = bytearray(bytes_out)
+    return byte_array
+
+def read_file(input_file):
+    ''' Reads a file and return output '''
     ilines = None
     try:
-        with open(args.input_file) as ifile:
+        with open(input_file) as ifile:
             ilines = ifile.read().split("\n")
+            return ilines
     except FileNotFoundError:
         print("ERROR File Not Found: " + args.input_file)
         exit(1)
 
-    # Remove whitespace and comments
+def clean_whitespace(lines):
+    ''' Removes comments and whitespace '''
     cleaned_lines = []
-    for line in ilines:
+    for line in lines:
         line = line.lstrip()
         line = line.split("#")[0]
         if line and (not line.isspace()):
             cleaned_lines.append(line)
 
-    # Parse labels and add to a map
-    PROGRAM_COUNTER = 1
-    LABELS = {}
-    for line in cleaned_lines:
+    return cleaned_lines
+
+def parse_labels(lines):
+    ''' Parses input for labels '''
+    program_counter = 1
+    labels = {}
+    for line in lines:
         # Split line to get the operand
         operand = line.split()[0]
 
         if ":" in operand:
             # Found a label, add it to the map
             label = str(operand.split(":")[0])
-            LABELS[label] = PROGRAM_COUNTER
+            labels[label] = program_counter
         else:
             # PC only increments when not a label
-            PROGRAM_COUNTER += 1
+            program_counter += 1
 
-    # Parse for instructions
-    PROGRAM_COUNTER = 0
+    return labels
+
+def parse_instructions(lines, labels):
+    ''' Parses input for instructions and converts to binary '''
+    program_counter = 0
     output = []
-    for line in cleaned_lines:
+    for line in lines:
         # Split line to get the operand
         operand = line.split()[0]
 
@@ -80,7 +102,7 @@ def main():
             continue
 
         # Fetched cmd, now increment pc
-        PROGRAM_COUNTER += 1
+        program_counter += 1
 
         # Check for .word
         if ".word" in operand:
@@ -168,7 +190,7 @@ def main():
             try:
                 addr = "{0:020b}".format(int(label))
             except ValueError:
-                addr = "{0:020b}".format(int(LABELS[label]))
+                addr = "{0:020b}".format(int(labels[label]))
 
             # Split up into 4 bit segments
             addr = space_out(addr, 4)
@@ -200,7 +222,7 @@ def main():
                     addr_int = int(label, 2)
                 else:
                     # addr will be relative to pc
-                    addr_int = int(LABELS[label]) - PROGRAM_COUNTER - 1
+                    addr_int = int(labels[label]) - program_counter - 1
             
             if addr_int < 0:
                 addr_int = MAX_IMM + addr_int + 1
@@ -215,21 +237,38 @@ def main():
 
         # Store the new output line
         output.append(" ".join(out))
+    return output
+
+def assemble(input_file):
+    ''' Opens a file and assembles it to machine code '''
+    # Read file into variable
+    ilines = read_file(input_file)
+
+    # Remove whitespace and comments
+    cleaned_lines = clean_whitespace(ilines)
+
+    # Parse labels and add to a map
+    labels = parse_labels(cleaned_lines)
+
+    # Parse for instructions
+    output = parse_instructions(cleaned_lines, labels)
 
     # Convert each 8 bits to a byte
-    bytes_out = []
-    for line in output:
-        nibbles = line.split(" ")
-        tmp = []
-        for val in [7, 5, 3, 1]:
-            byte = nibbles[val - 1] + nibbles[val]
-            bytes_out.append(int(byte, 2))
-            tmp.append(int(byte, 2))
-    byte_array = bytearray(bytes_out)
+    byte_array = convert_to_bytes(output)
+
+    return byte_array
+
+def main():
+    ''' main method '''
+    # Parse args
+    args = get_args()
+
+    # Assemble
+    output = assemble(args.input_file)
 
     # Output into new file
     with open(args.output_file, "wb") as ofile:
-        ofile.write(byte_array)
+        ofile.write(output)
 
 if __name__ == "__main__":
     main()
