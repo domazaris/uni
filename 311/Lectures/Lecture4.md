@@ -28,4 +28,29 @@
 * Can use FPGAs or ASICs for hardware implementations
 * ASICs faster and more power efficient, but more expensive
 * CPUs use same technology as ASICs, but not application specific
-* 
+
+## Logic Slices
+* LUT: Look Up Table
+* LUTs are used as truth tables
+* Logic slices contain multiple LUTs
+* CLB: Configurable Logic Block - colletion of logic slices
+
+## DSP Slices
+* For arithmetic opterations
+* Faster than LUTs 
+
+## Block RAM slices
+* Used for:
+  * Register files
+  * Simulate main CPU memory
+* Can use logic slices for these functions, but inefficient
+  * "Distributed RAM"
+  * Is not a good idea
+
+
+## "Compilation"
+* **Synthesis**: converts Verilog code into a netlist
+  * **netlist**: describes digital circuit using flip-flops and logic gaes & wires
+* **Implementation**: Maps netlist to routing resources on the FPGA
+  * Dominant sub-step of this is known as **place and route**
+* Optimisation steps can take a long time
