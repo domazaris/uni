@@ -1,7 +1,13 @@
-all: LinkedList
+all: LinkedList Task1
 
-LinkedList: src/LinkedList.c include/LinkedList.h
-	mkdir -p lib && gcc -c -I include -o lib/$@.o src/$@.c
+LinkedList: Build src/LinkedList.c include/LinkedList.h
+	gcc -c -I include -o lib/$@.o src/$@.c
+
+Task1: Build LinkedList
+	gcc -I include -o bin/$@ src/$@.c lib/LinkedList.o
+
+Build:
+	mkdir -p lib bin
 
 clean:
 	rm -rf lib
