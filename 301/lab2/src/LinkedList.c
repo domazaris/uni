@@ -1,20 +1,90 @@
 #include <stddef.h>
+#include <stdio.h>
 #include "LinkedList.h"
 
-void insert_node( LinkedList* list, Node_t* node )
+int insert_node( Node_t** head, Node_t* node )
 {
+    // Check if list is empty
+    size_t idx = 0;
+    if( *head == NULL )
+    {
+        *head = node;
+        return idx;
+    }
+
+    // Get to end of list
+    Node_t* cur = *head;
+    while( cur != NULL )
+    {
+        // Check if at end of list
+        if( cur->next == NULL )
+        {
+            // End of list, add node
+            cur->next = (void*)node;
+            return idx;
+        }
+
+        // Goto next node
+        cur = (Node_t*)cur->next;
+        idx += 1;
+    }
+
+    // Error
+    return -1;
 }
 
-void delete_node( LinkedList* list, Node_t* node )
+void delete_node( Node_t** head, Node_t* node )
 {
+    // Check if list is empty
+    if( *head == NULL )
+        return;
+
+    // Find node in list
+    Node_t* cur = *head;
+    Node_t* prev = NULL;
+
+    while( cur != NULL )
+    {
+        // Check node
+        if( cur = node )
+        {
+            // Check left
+            if( prev != NULL )
+                prev->next = (void*)node;
+
+            // Check right
+            if( cur->next != NULL )
+                cur->next = prev->next;
+
+            // Check if only node in list
+            if( prev == NULL &&  cur->next == NULL )
+                *head = NULL;
+
+            return;
+        }
+        else
+        {
+            // Move along, move along
+            prev = cur;
+            cur = (Node_t*)cur->next;
+        }
+    }
+
+    // Shouldn't get here
+    return;
 }
 
-Node_t* traverse( LinkedList* list, int idx )
+void traverse( Node_t* head )
 {
-  return NULL;
+    Node_t* cur = head;
+    while( cur != NULL )
+    {
+        printf( "Process ID:\t\t%d\nQueue:\t\t\t%d\nLottery Ticket:\t\t%d\n\n", cur->pid, cur->q, cur->lt );
+        cur = (Node_t*)cur->next;
+    }
 }
 
-Node_t* find( LinkedList* list )
+Node_t* find( Node_t* head )
 {
   return NULL;
 }
