@@ -15,6 +15,8 @@ int main( int argc, char* argv[] )
         free(cur);
     }
 
+    printf("Traversing what should be an empty list\n");
     traverse( head );
+    printf("Done!\n");
     return 0;
 }

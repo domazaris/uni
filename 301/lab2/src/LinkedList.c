@@ -54,10 +54,10 @@ Node_t* delete_node( Node_t** head, Node_t* node )
         {
             // Check left
             if( prev != NULL )
-                prev->next = (void*)node;
+                prev->next = (void*)node->next;
 
             // Check right
-            if( cur->next != NULL )
+            if( cur->next != NULL && prev != NULL )
                 cur->next = prev->next;
 
             // Check if only node in list
