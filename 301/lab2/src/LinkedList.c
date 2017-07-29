@@ -33,15 +33,19 @@ int insert_node( Node_t** head, Node_t* node )
     return -1;
 }
 
-void delete_node( Node_t** head, Node_t* node )
+Node_t* delete_node( Node_t** head, Node_t* node )
 {
     // Check if list is empty
     if( *head == NULL )
-        return;
+        return NULL;
 
     // Find node in list
+    Node_t* new_head = *head;
     Node_t* cur = *head;
     Node_t* prev = NULL;
+
+    if( *head == node )
+        new_head = (Node_t*)(*head)->next;
 
     while( cur != NULL )
     {
@@ -60,7 +64,7 @@ void delete_node( Node_t** head, Node_t* node )
             if( prev == NULL &&  cur->next == NULL )
                 *head = NULL;
 
-            return;
+            return new_head;
         }
         else
         {
@@ -71,7 +75,7 @@ void delete_node( Node_t** head, Node_t* node )
     }
 
     // Shouldn't get here
-    return;
+    return new_head;
 }
 
 void traverse( Node_t* head )
