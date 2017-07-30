@@ -41,7 +41,7 @@ def scan_labels(ilines):
             if addr not in labels.keys():
                 # The addr doesnt exists
                 program_counter = int(addr, 2)
-                
+
                 # If branch instruction
                 if line[0] == "1011" or line[0] == "1010":
                     program_counter = program_counter + counter - MAX_IMM
@@ -116,7 +116,7 @@ def convert(ilines, labels):
                 stack = int(addr, 2)
                 if stack > (MAX_IMM / 2):
                     stack -= MAX_IMM + 1
-                
+
                 # Register
                 register = "($" + str(int(line[2], 2)) + ")"
 
@@ -137,21 +137,20 @@ def convert(ilines, labels):
                         addr_dec += MAX_IMM + 1
                     elif addr_dec > len(ilines):
                         addr_dec -= MAX_IMM + 1
-                
+
                 try:
                     label = labels[addr_dec]
                     output_line.append(label)
                 except KeyError:
                     output_line.append(hex(int(addr, 2)))
-                    
 
         output.append("".join(output_line))
     return output
 
 def nibbles(line):
     ''' Returns an array of nibbles from a given line '''
-    nibbles = [line[i:i+4] for i in range(0, len(line), 4)]
-    return nibbles
+    nbls = [line[i:i+4] for i in range(0, len(line), 4)]
+    return nbls
 
 def read_file(filename):
     ''' Reads a file and returns an array of lines of nibbles '''
@@ -181,20 +180,16 @@ def main():
 
     # Read file into variable
     lines = read_file(args.input_file)
-    for _ in lines:
-        print(_)
 
     # get the pc of each label
     labels = scan_labels(lines)
 
     # Convert the machine code to WRAMP
-    print(labels)
     output = convert(lines, labels)
 
     # Output to file
     with open(args.output_file, "w") as ofile:
         for line in output:
-            print(line)
             ofile.write(line + "\n")
 
 if __name__ == "__main__":
