@@ -1,5 +1,10 @@
 #! /usr/bin/python3
-''' Assembles WRAMP code into machine code '''
+'''
+Author: Dominic Azaris
+ID:     1297845
+Descripton: Assembles WRAMP code into machine code
+
+'''
 import argparse
 
 MAX_IMM = int("11111111111111111111", 2)
@@ -57,7 +62,7 @@ def read_file(input_file):
             ilines = ifile.read().split("\n")
             return ilines
     except FileNotFoundError:
-        print("ERROR File Not Found: " + args.input_file)
+        print("ERROR File Not Found: " + input_file)
         exit(1)
 
 def clean_whitespace(lines):
@@ -107,7 +112,7 @@ def parse_instructions(lines, labels):
         # Check for .word
         if ".word" in operand:
             word = line.split()[-1]
-            
+
             # Convert
             word = int(word[2:], 16)
             out = space_out("{0:032b}".format(word), 4)
@@ -145,7 +150,7 @@ def parse_instructions(lines, labels):
                 # Get the address and convert to binary
                 addr = None
                 if "0b" in preaddr:
-                    addr = "{0:016b}".format(int(preaddr[2:],2))
+                    addr = "{0:016b}".format(int(preaddr[2:], 2))
                 elif "0x" in preaddr:
                     hex_addr = int(preaddr[2:], 16)
                     addr = "{0:016b}".format(hex_addr)
@@ -160,10 +165,10 @@ def parse_instructions(lines, labels):
             else:
                 imm = optargs[1].split("(")[0]
                 src = optargs[1].split("$")[-1].split(")")[0]
-                
+
                 src = "{0:04b}".format(int(src))
                 out[2] = src
-                
+
                 # Get the address and convert to binary
                 addr_int = 0
                 if "0b" in imm:
@@ -176,7 +181,7 @@ def parse_instructions(lines, labels):
                         addr_int = MAX_IMM + addr_int + 1
 
                 addr = "{0:020b}".format(addr_int)
-                
+
                 # add split up and add to the output
                 addr = space_out(addr, 4)
                 for val in range(3, 8):
@@ -185,7 +190,7 @@ def parse_instructions(lines, labels):
         elif out[0] == "0100":
             # Jump - convert the pc to binary at the given label
             label = line.split()[1].split(",")[0]
-            
+
             addr = None
             try:
                 addr = "{0:020b}".format(int(label))
@@ -223,7 +228,7 @@ def parse_instructions(lines, labels):
                 else:
                     # addr will be relative to pc
                     addr_int = int(labels[label]) - program_counter - 1
-            
+
             if addr_int < 0:
                 addr_int = MAX_IMM + addr_int + 1
 
