@@ -17,6 +17,9 @@ Task2: Build LinkedList Scheduler
 Build:
 	mkdir -p lib bin
 
+test: Task1 Task2
+	chronic ./bin/Task1 ./data/task1.csv
+	chronic ./bin/Task2 ./data/task1.csv
+
 clean:
-	rm -rf lib
-	rm -rf bin
+	rm -rf lib bin

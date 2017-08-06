@@ -25,13 +25,10 @@ void addTask( Scheduler_t* s, int pid, int q, int priority )
     // Add to list
     if( s->tasks == NULL )
     {
-        // s is empty
-        s->tasks = &new_node;
+        s->tasks = (Node_t**)malloc( sizeof(Node_t*) );
     }
-    else
-    {
-        insert_node( s->tasks, new_node );
-    }
+
+    insert_node( s->tasks, new_node );
 
     // Increment process count
     s->p_count += 1;
@@ -64,9 +61,9 @@ size_t drawLottery( size_t max_value )
     return rand() % max_value;
 }
 
-void execute( int pid )
+void execute( int pid, int q )
 {
-    fprintf( stdout, "%d", pid );
+    fprintf( stdout, "%d %d, ", pid, q );
     fflush( stdout );
 }
 
@@ -74,9 +71,6 @@ void run( Scheduler_t* s )
 {
     while( ! isEmpty( s ) && s != NULL )
     {
-        fprintf(stdout, ".");
-        fflush( stdout );
-
         // Run until winner is selected
         Node_t* node = NULL;
         while( node == NULL )
@@ -89,13 +83,13 @@ void run( Scheduler_t* s )
         }
 
         // Execute successful ticket
-        execute( node->pid );
+        execute( node->pid, node->q );
 
         // Delete node from list
         delete_node( s->tasks, node );
         s->p_count -= 1;
     }
-    fprintf( stderr, "Done\n");
+    fprintf(stdout, "\n");
 }
 
 int isEmpty( Scheduler_t* s )
