@@ -1,10 +1,15 @@
-all: LinkedList Task1
+CC=gcc
+
+all: Task1 Scheduler
+
+Scheduler: Build LinkedList
+	$(CC) -c -I include -g -o lib/$@.o src/$@.c
 
 LinkedList: Build src/LinkedList.c include/LinkedList.h
-	gcc -c -I include -g -o lib/$@.o src/$@.c
+	$(CC) -c -I include -g -o lib/$@.o src/$@.c
 
 Task1: Build LinkedList
-	gcc -I include -g -o bin/$@ src/$@.c lib/LinkedList.o
+	$(CC) -I include -g -o bin/$@ src/$@.c lib/LinkedList.o
 
 Build:
 	mkdir -p lib bin
