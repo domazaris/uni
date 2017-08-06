@@ -1,6 +1,6 @@
 CC=gcc
 
-all: Task1 Scheduler
+all: Task1 Task2
 
 Scheduler: Build LinkedList
 	$(CC) -c -I include -g -o lib/$@.o src/$@.c
@@ -10,6 +10,9 @@ LinkedList: Build src/LinkedList.c include/LinkedList.h
 
 Task1: Build LinkedList
 	$(CC) -I include -g -o bin/$@ src/$@.c lib/LinkedList.o
+
+Task2: Build LinkedList Scheduler
+	$(CC) -I include -g -o bin/$@ src/$@.c lib/LinkedList.o lib/Scheduler.o
 
 Build:
 	mkdir -p lib bin

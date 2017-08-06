@@ -23,24 +23,40 @@ void addTask( Scheduler_t* s, int pid, int q, int priority )
     }
 
     // Add to list
-    insert_node( s->tasks, new_node );
+    if( s->tasks == NULL )
+    {
+        // s is empty
+        s->tasks = &new_node;
+    }
+    else
+    {
+        insert_node( s->tasks, new_node );
+    }
+
+    // Increment process count
+    s->p_count += 1;
 }
 
-Node_t* findTicket( size_t ticket )
+Node_t* findTicket( Scheduler_t* s, size_t ticket )
 {
-    fprintf(stderr, "finding\n");
-
     // Iterate list
+    Node_t* node = (Node_t*)*s->tasks;
+    while( node != NULL )
+    {
+        // Check tickets
+        for( size_t i = 0; i < node->lt; i++ )
+        {
+            if( node->tickets[ i ] == ticket )
+            {
+                // Return winning node
+                return node;
+            }
+        }
+        node = node->next;
+    }
 
-    // Check tickets
-
-    // Return winning node
-
-    // Continue
-
+    // If no node is found
     return NULL;
-
-    fprintf(stderr, "found\n");
 }
 
 size_t drawLottery( size_t max_value )
@@ -61,17 +77,23 @@ void run( Scheduler_t* s )
         fprintf(stdout, ".");
         fflush( stdout );
 
-        // Draw lottery
-        size_t winner = drawLottery( s->lottery_count );
-
-        // Find node from ticket
-        Node_t* node = findTicket( winner );
+        // Run until winner is selected
+        Node_t* node = NULL;
+        while( node == NULL )
+        {
+            // Draw lottery
+            size_t winner = drawLottery( s->lottery_count );
+            
+            // Find node from ticket
+            node = findTicket( s, winner );
+        }
 
         // Execute successful ticket
         execute( node->pid );
 
         // Delete node from list
         delete_node( s->tasks, node );
+        s->p_count -= 1;
     }
     fprintf( stderr, "Done\n");
 }
