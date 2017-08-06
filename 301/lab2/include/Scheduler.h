@@ -9,5 +9,5 @@ typedef struct Scheduler
 } Scheduler_t;
 
 void addTask( Scheduler_t* s, int pid, int q, int priority );
-void execute( Scheduler_t* s );
+void run( Scheduler_t* s );
 int isEmpty( Scheduler_t* s );

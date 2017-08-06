@@ -26,22 +26,52 @@ void addTask( Scheduler_t* s, int pid, int q, int priority )
     insert_node( s->tasks, new_node );
 }
 
+Node_t* findTicket( size_t ticket )
+{
+    fprintf(stderr, "finding\n");
+
+    // Iterate list
+
+    // Check tickets
+
+    // Return winning node
+
+    // Continue
+
+    return NULL;
+
+    fprintf(stderr, "found\n");
+}
+
 size_t drawLottery( size_t max_value )
 {
     return rand() % max_value;
 }
 
-void execute( Scheduler_t* s )
+void execute( int pid )
 {
-    while( ! isEmpty( s ) )
+    fprintf( stdout, "%d", pid );
+    fflush( stdout );
+}
+
+void run( Scheduler_t* s )
+{
+    while( ! isEmpty( s ) && s != NULL )
     {
+        fprintf(stdout, ".");
+        fflush( stdout );
+
         // Draw lottery
+        size_t winner = drawLottery( s->lottery_count );
 
         // Find node from ticket
+        Node_t* node = findTicket( winner );
 
         // Execute successful ticket
+        execute( node->pid );
 
         // Delete node from list
+        delete_node( s->tasks, node );
     }
     fprintf( stderr, "Done\n");
 }
