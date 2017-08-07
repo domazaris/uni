@@ -44,7 +44,7 @@ Node_t* parseFile( const char* filename )
         // Set values
         node->pid = i;
         node->q = q;
-        node->lt = l;
+        node->priority = l;
 
         // Insert
         insert_node( &head, node );

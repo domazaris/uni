@@ -50,7 +50,7 @@ Node_t* delete_node( Node_t** head, Node_t* node )
     while( cur != NULL )
     {
         // Check node
-        if( cur = node )
+        if( cur == node )
         {
             // Check left
             if( prev != NULL )
@@ -83,7 +83,7 @@ void traverse( Node_t* head )
     Node_t* cur = head;
     while( cur != NULL )
     {
-        printf( "Process ID:\t\t%d\nQueue:\t\t\t%d\nLottery Ticket:\t\t%d\n\n", cur->pid, cur->q, cur->lt );
+        printf( "Process ID:\t\t%zu\nQueue:\t\t\t%zu\nLottery Ticket:\t\t%zu\n\n", cur->pid, cur->q, cur->priority );
         cur = (Node_t*)cur->next;
     }
 }

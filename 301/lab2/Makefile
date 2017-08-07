@@ -19,7 +19,7 @@ Build:
 
 test: Task1 Task2
 	chronic ./bin/Task1 ./data/task1.csv
-	chronic ./bin/Task2 ./data/task1.csv
+	./bin/Task2 ./data/task2.csv
 
 clean:
 	rm -rf lib bin

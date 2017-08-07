@@ -2,9 +2,9 @@
 #include <stddef.h>
 
 typedef struct Node {
-  int pid; // Process ID
-  int q; // Quanta
-  int lt; // Num lottery tickets held
+  size_t pid; // Process ID
+  size_t q; // Quanta
+  size_t priority; // Num lottery tickets held
   size_t* tickets;
 
   void* next; // Next node in list
