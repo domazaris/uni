@@ -157,9 +157,16 @@ void run( Scheduler_t* s )
         {
             delete_node( s->tasks, node );
             s->p_count -= 1;
+            free( node->tickets );
+            free( node );
         }
     }
     fprintf(stdout, "\n");
+
+    if( s->tasks != NULL )
+    {
+        free(s->tasks);
+    }
 }
 
 int isEmpty( Scheduler_t* s )
