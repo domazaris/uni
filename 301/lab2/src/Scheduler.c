@@ -58,6 +58,7 @@ void addTask( Scheduler_t* s, size_t pid, size_t q, size_t priority )
     if( s->tasks == NULL )
     {
         s->tasks = (Node_t**)malloc( sizeof(Node_t*) );
+        s->tasks[0] = NULL;
     }
 
     insert_node( s->tasks, new_node );
@@ -96,9 +97,9 @@ size_t drawLottery( size_t max_value )
 void execute( Scheduler_t* s, Node_t* n )
 {
     // Sleep for one quanta
-    usleep( QUANTA );
+    //usleep( QUANTA );
 
-    fprintf( stdout, "%zu %zums\n", n->pid, n->priority );
+    //fprintf( stdout, "%zu %zums\n", n->pid, n->priority );
 
     // Increment scheduler counters
     switch( n->priority )
@@ -128,6 +129,9 @@ void execute( Scheduler_t* s, Node_t* n )
             break;
         }
     }
+
+    // Decrement the quanta
+    n->q -= 1;
 }
 
 void run( Scheduler_t* s )
@@ -148,8 +152,7 @@ void run( Scheduler_t* s )
         // Execute successful ticket
         execute( s, node );
 
-        // Delete node from list
-        node->q -= 1;
+        // Delete node from list when q reaches 0
         if( node->q == 0 )
         {
             delete_node( s->tasks, node );

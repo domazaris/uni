@@ -18,10 +18,10 @@ void parseFile( Scheduler_t* s, const char* filename )
 
     // Ignore first line
     char* string = (char*)malloc( 256 );
-    fgets( string, 100, fd );
+    fgets( string, 256, fd );
 
     // Read a line at a time
-    while( fgets( string, 100, fd ) != NULL )
+    while( fgets( string, 256, fd ) != NULL )
     {
         int pid = atoi( strtok( string, "," ) );
         int q = atoi( strtok( NULL, "," ) );
@@ -70,10 +70,10 @@ int main( int argc, char* argv[] )
 
     // Print averages
     fprintf(stderr, "Average execution times:\n" );
-    fprintf(stderr, "  Realtime:   %0.1f\n", ave_rt );
-    fprintf(stderr, "  System:     %0.1f\n", ave_sys );
-    fprintf(stderr, "  User:       %0.1f\n", ave_use );
-    fprintf(stderr, "  Background: %0.1f\n", ave_bg );
+    fprintf(stderr, "  Realtime:   %0.1f ms\n", ave_rt );
+    fprintf(stderr, "  System:     %0.1f ms\n", ave_sys );
+    fprintf(stderr, "  User:       %0.1f ms\n", ave_use );
+    fprintf(stderr, "  Background: %0.1f ms\n", ave_bg );
 
     // Clean up
     free( scheduler.total_exe );
