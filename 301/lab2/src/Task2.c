@@ -63,17 +63,17 @@ int main( int argc, char* argv[] )
     run( &scheduler );
 
     // Calc averages - checks for 0 denominators first
-    float ave_rt = scheduler.total_exe[0] == 0 ? 0 : scheduler.total_exe_time[0] / scheduler.total_exe[0];
-    float ave_sys = scheduler.total_exe[1] == 0 ? 0 :scheduler.total_exe_time[1] / scheduler.total_exe[1];
-    float ave_use = scheduler.total_exe[2] == 0 ? 0 :scheduler.total_exe_time[2] / scheduler.total_exe[2];
-    float ave_bg = scheduler.total_exe[3] == 0 ? 0 :scheduler.total_exe_time[3] / scheduler.total_exe[3];
+    size_t ave_rt = scheduler.total_exe[0] == 0 ? 0 : scheduler.total_exe_time[0] / scheduler.total_exe[0];
+    size_t ave_sys = scheduler.total_exe[1] == 0 ? 0 :scheduler.total_exe_time[1] / scheduler.total_exe[1];
+    size_t ave_use = scheduler.total_exe[2] == 0 ? 0 :scheduler.total_exe_time[2] / scheduler.total_exe[2];
+    size_t ave_bg = scheduler.total_exe[3] == 0 ? 0 :scheduler.total_exe_time[3] / scheduler.total_exe[3];
 
     // Print averages
     fprintf(stderr, "Average execution times:\n" );
-    fprintf(stderr, "  Realtime:   %0.1f ms\n", ave_rt );
-    fprintf(stderr, "  System:     %0.1f ms\n", ave_sys );
-    fprintf(stderr, "  User:       %0.1f ms\n", ave_use );
-    fprintf(stderr, "  Background: %0.1f ms\n", ave_bg );
+    fprintf(stderr, "  Realtime:   %zu ms\n", ave_rt );
+    fprintf(stderr, "  System:     %zu ms\n", ave_sys );
+    fprintf(stderr, "  User:       %zu ms\n", ave_use );
+    fprintf(stderr, "  Background: %zu ms\n", ave_bg );
 
     // Clean up
     free( scheduler.total_exe );

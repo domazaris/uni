@@ -35,47 +35,38 @@ int insert_node( Node_t** head, Node_t* node )
 
 Node_t* delete_node( Node_t** head, Node_t* node )
 {
-    // Check if list is empty
-    if( *head == NULL )
-        return NULL;
-
-    // Find node in list
-    Node_t* new_head = *head;
-    Node_t* cur = *head;
-    Node_t* prev = NULL;
-
-    if( *head == node )
-        new_head = (Node_t*)(*head)->next;
-
-    while( cur != NULL )
+    if( head == NULL || *head == NULL || node == NULL )
     {
-        // Check node
-        if( cur == node )
-        {
-            // Check left
-            if( prev != NULL )
-                prev->next = (void*)node->next;
-
-            // Check right
-            if( cur->next != NULL && prev != NULL )
-                cur->next = prev->next;
-
-            // Check if only node in list
-            if( prev == NULL &&  cur->next == NULL )
-                *head = NULL;
-
-            return new_head;
-        }
-        else
-        {
-            // Move along, move along
-            prev = cur;
-            cur = (Node_t*)cur->next;
-        }
+        return NULL;
     }
 
-    // Shouldn't get here
-    return new_head;
+    Node_t* updated_head = *head;
+
+    if( node == *head )
+    {
+        updated_head = (*head)->next;
+        return updated_head;
+    }
+    
+    // Find node
+    Node_t* cur = (*head)->next;
+    Node_t* pre = *head;
+    while( cur != NULL )
+    {
+        if( node == cur )
+        {
+            // Delete cur
+            pre->next = cur->next;
+            return updated_head;
+        }
+
+        // Iterate
+        pre = cur;
+        cur = cur->next;
+    }
+
+    // Couldn't find node
+    return updated_head;
 }
 
 void traverse( Node_t* head )

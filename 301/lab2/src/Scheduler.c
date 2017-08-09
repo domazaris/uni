@@ -99,6 +99,8 @@ void execute( Scheduler_t* s, Node_t* n )
     // Sleep for one quanta
     //usleep( QUANTA );
 
+    // printf("%zu ", n->priority);
+    fflush(stdout);
     //fprintf( stdout, "%zu %zums\n", n->pid, n->priority );
 
     // Increment scheduler counters
@@ -157,7 +159,6 @@ void run( Scheduler_t* s )
         {
             delete_node( s->tasks, node );
             s->p_count -= 1;
-            free( node->tickets );
             free( node );
         }
     }
