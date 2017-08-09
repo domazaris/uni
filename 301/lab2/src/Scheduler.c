@@ -96,13 +96,6 @@ size_t drawLottery( size_t max_value )
 
 void execute( Scheduler_t* s, Node_t* n )
 {
-    // Sleep for one quanta
-    //usleep( QUANTA );
-
-    // printf("%zu ", n->priority);
-    fflush(stdout);
-    //fprintf( stdout, "%zu %zums\n", n->pid, n->priority );
-
     // Increment scheduler counters
     switch( n->priority )
     {
