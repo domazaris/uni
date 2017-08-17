@@ -1,13 +1,13 @@
 CC = gcc
 LIBS = -lpthread
 
-all: incorrect
+all: deadlock
 
-incorrect: incorrect.c fork.h
+deadlock: deadlock fork.h
 	$(CC) -Wall -pedantic -Werror -o $@ $@.c $(LIBS)
 
-test: incorrect
-	./incorrect
+test: deadlock
+	./deadlock
 
 clean:
-	rm -rf incorrect *.o
+	rm -rf deadlock *.o
