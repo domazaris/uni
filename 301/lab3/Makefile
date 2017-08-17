@@ -14,4 +14,4 @@ test: deadlock correct
 	./correct
 
 clean:
-	rm -rf deadlock *.o
+	rm -rf deadlock correct
