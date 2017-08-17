@@ -1,7 +1,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include "fork.h"
-#define N 5 // Num philosophers
+#define N 10 // Num philosophers
 
 void take_fork( fork_t* forks, size_t fork )
 {
@@ -15,14 +15,14 @@ void put_fork( fork_t* forks, size_t fork )
     unlockFork( forks + fork );
 }
 
-void think()
+void think(int i)
 {
-    fprintf(stderr,"t");
+    fprintf(stderr, "%dt ", i);
 }
 
-void eat()
+void eat(int i)
 {
-    fprintf(stderr,"e");
+    fprintf(stderr," %de ", i);
 }
 
 typedef struct arg
@@ -39,12 +39,12 @@ void* run_philosopher( void* args )
     // Forever
     while( 1 )
     {
-        think();
+        think( id );
         take_fork( forks, id );
 
         
         take_fork( forks, (id + 1) % N );
-        eat();
+        eat( id );
         put_fork(forks, id );
         put_fork( forks, (id + 1) % N );
         

@@ -3,7 +3,7 @@ LIBS = -lpthread
 
 all: deadlock
 
-deadlock: deadlock fork.h
+deadlock: deadlock.c fork.h
 	$(CC) -Wall -pedantic -Werror -o $@ $@.c $(LIBS)
 
 test: deadlock
