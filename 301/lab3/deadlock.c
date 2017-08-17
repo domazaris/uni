@@ -1,20 +1,4 @@
-#include <unistd.h>
-#include <pthread.h>
 #include "fork.h"
-#define N 10 // Num philosophers
-#define MAX_TIME 10 // 10ms
-
-void take_fork( fork_t* forks, size_t fork )
-{
-    // Wait until fork is ready
-    lockFork( forks + fork );
-}
-
-void put_fork( fork_t* forks, size_t fork )
-{
-    // Unlock
-    unlockFork( forks + fork );
-}
 
 void think(int i)
 {
@@ -28,11 +12,17 @@ void eat(int i)
     usleep( rand() % MAX_TIME );
 }
 
-typedef struct arg
+void take_fork( fork_t* forks, size_t fork )
 {
-    fork_t* forks;
-    size_t id;
-} arg_t;
+    // Wait until fork is ready
+    lockFork( forks + fork );
+}
+
+void put_fork( fork_t* forks, size_t fork )
+{
+    // Unlock
+    unlockFork( forks + fork );
+}
 
 void* run_philosopher( void* args )
 {

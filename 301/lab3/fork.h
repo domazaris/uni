@@ -1,9 +1,15 @@
 #pragma once
 #include <pthread.h>
 #include <errno.h>
+#include <unistd.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+#define N 10 // Num philosophers
+#define MAX_TIME 10 // 10ms
+
 typedef struct Fork {
     pthread_mutex_t mutex;
 } fork_t;
@@ -27,3 +33,9 @@ void unlockFork( fork_t* fork )
         abort();
     }
 }
+
+typedef struct arg
+{
+    fork_t* forks;
+    size_t id;
+} arg_t;
