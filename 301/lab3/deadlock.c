@@ -2,6 +2,7 @@
 #include <pthread.h>
 #include "fork.h"
 #define N 10 // Num philosophers
+#define MAX_TIME 10 // 10ms
 
 void take_fork( fork_t* forks, size_t fork )
 {
@@ -18,11 +19,13 @@ void put_fork( fork_t* forks, size_t fork )
 void think(int i)
 {
     fprintf(stderr, "%dt ", i);
+    usleep( rand() % MAX_TIME );
 }
 
 void eat(int i)
 {
     fprintf(stderr," %de ", i);
+    usleep( rand() % MAX_TIME );
 }
 
 typedef struct arg
@@ -58,6 +61,9 @@ void* run_philosopher( void* args )
 
 int main()
 {
+    // seed rand
+    srand( time(NULL) );
+
     pthread_t* threads = malloc( sizeof(pthread_t) * N );
     fork_t* forks = malloc( sizeof(fork_t) * N );
 
