@@ -19,8 +19,23 @@ typedef enum state state_t;
 
 state_t STATE[ N ];
 typedef int semaphore;
-semaphore mutex = 1;
 semaphore s[ N ];
+
+void down( int* i )
+{
+    // Block until lock can be acquired
+    while( *i < 1 )
+    {
+        usleep(1);
+    }
+    *i -= 1;
+}
+
+void up( int* i )
+{
+    // Release lock
+    *i += 1;
+}
 
 typedef struct arg
 {
@@ -46,26 +61,22 @@ void test(int i)
     if( STATE[i] == hungry && STATE[ LEFT ] != eating && STATE[ RIGHT ] != eating )
     {
         STATE[i] = eating;
-        s[i] += 1;
+        up(&s[i]);
     }
 }
 
 void take_forks(int i)
 {
-    mutex -= 1;
     STATE[ i ] = hungry;
-    test(i);
-    mutex += 1;
-    s[ i ] -= 1;
+    test( i );
+    down( &s[ i ] );
 }
 
 void put_forks(int i)
 {
-    mutex -= 1;
     STATE[ i ] = thinking;
     test(LEFT);
     test(RIGHT);
-    mutex += 1;
 }
 
 void* run_philosopher( void* args )
