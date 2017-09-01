@@ -10,3 +10,6 @@
 [submodule "204/Assignment_01"]
 	path = 204/Assignment_01
 	url = http://gitlab.cms.waikato.ac.nz/djmha1/AssignmentOne.git
+[submodule "204/Assignment_05"]
+	path = 204/Assignment_05
+	url = http://gitlab.cms.waikato.ac.nz/djmha1/Assignment_05.git
