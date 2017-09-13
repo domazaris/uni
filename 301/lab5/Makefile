@@ -1,16 +1,14 @@
-all: fileop
+all: fileop dlist
 
 fileop: fileop.c
 	gcc fileop.c -Wall -pedantic -Werror -o fileop
 
+dlist: dlist.c
+	gcc dlist.c -Wall -pedantic -Werror -o dlist
+
 test: fileop
-	touch testfile
-	./fileop testfile 0 w test1
-	./fileop testfile 0 r 5
-	./fileop testfile 1008 w test2
-	./fileop testfile 1008 r 5
-	ls -hla testfile
-	rm testfile
+	./test_fileop.sh
+	./test_dlist.sh .
 
 clean:
-	rm -f fileop testfile
+	rm -f fileop dlist
