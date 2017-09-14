@@ -65,12 +65,17 @@ void rnd( int page, int modified )
     }
 }
 
-void fif( int page, int modified )
+void nru( int page, int modified )
 {
 
 }
 
 void lru( int page, int modified )
+{
+
+}
+
+void clk( int page, int modified )
 {
 
 }
@@ -95,14 +100,14 @@ void simulate( char* fRefPages, char* fReport )
              "RND M %d F %d D %d L %d %d %d %d\n", 
              nMemRef, nFaults, nDiskRef, page_frames[0], page_frames[1], page_frames[2], page_frames[3] );
 
-    // FIF
+    // NRU
     while( fscanf( fpRefPages, "%d %d", &page, &modified ) != EOF )
     {
-        fif( page, modified );
+        nru( page, modified );
     }
     rewind(fpRefPages);
     fprintf( fpReport, 
-        "FIF M %d F %d D %d L %d %d %d %d\n", 
+        "NRU M %d F %d D %d L %d %d %d %d\n", 
         nMemRef, nFaults, nDiskRef, page_frames[0], page_frames[1], page_frames[2], page_frames[3] );
 
     // LRU
@@ -114,6 +119,15 @@ void simulate( char* fRefPages, char* fReport )
         "LRU M %d F %d D %d L %d %d %d %d\n", 
         nMemRef, nFaults, nDiskRef, page_frames[0], page_frames[1], page_frames[2], page_frames[3] );
     
+    // CLK
+    while( fscanf( fpRefPages, "%d %d", &page, &modified ) != EOF )
+    {
+        clk( page, modified );
+    }
+    fprintf( fpReport, 
+        "CLK M %d F %d D %d L %d %d %d %d\n", 
+        nMemRef, nFaults, nDiskRef, page_frames[0], page_frames[1], page_frames[2], page_frames[3] );
+
     fclose( fpRefPages );
     fclose( fpReport );
 }
