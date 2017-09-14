@@ -65,6 +65,16 @@ void rnd( int page, int modified )
     }
 }
 
+void fif( int page, int modified )
+{
+
+}
+
+void lru( int page, int modified )
+{
+
+}
+
 void simulate( char* fRefPages, char* fReport )
 {
     FILE* fpRefPages = fopen( fRefPages, "r" );
@@ -73,15 +83,36 @@ void simulate( char* fRefPages, char* fReport )
     int page;
     int modified;
 
+    // RND
     srand( SEED );
     while( fscanf( fpRefPages, "%d %d", &page, &modified ) != EOF )
     {
         rnd( page, modified );
     }
+    rewind(fpRefPages);
 
     fprintf( fpReport, 
              "RND M %d F %d D %d L %d %d %d %d\n", 
              nMemRef, nFaults, nDiskRef, page_frames[0], page_frames[1], page_frames[2], page_frames[3] );
+
+    // FIF
+    while( fscanf( fpRefPages, "%d %d", &page, &modified ) != EOF )
+    {
+        fif( page, modified );
+    }
+    rewind(fpRefPages);
+    fprintf( fpReport, 
+        "FIF M %d F %d D %d L %d %d %d %d\n", 
+        nMemRef, nFaults, nDiskRef, page_frames[0], page_frames[1], page_frames[2], page_frames[3] );
+
+    // LRU
+    while( fscanf( fpRefPages, "%d %d", &page, &modified ) != EOF )
+    {
+        lru( page, modified );
+    }
+    fprintf( fpReport, 
+        "LRU M %d F %d D %d L %d %d %d %d\n", 
+        nMemRef, nFaults, nDiskRef, page_frames[0], page_frames[1], page_frames[2], page_frames[3] );
     
     fclose( fpRefPages );
     fclose( fpReport );
