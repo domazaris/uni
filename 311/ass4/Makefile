@@ -1,4 +1,4 @@
-all: sobel
+all: sobel orig
 
 sobel:
 	gcc src/sobel.c src/imageio.c -O3 -lm -o sobel
