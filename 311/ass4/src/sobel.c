@@ -20,18 +20,18 @@ float vfilter[] = {
 void apply_filter(const float *input, int width, int height, const float *kernel, float *output)
 {
     //Iterate over each column in the image
-    for(int c = 0; c < width; c++)
+    for(size_t c = 0; c < width; c++)
     {
         //Now iterate over each row in the image
-        for(int r = 0; r < height; r++)
+        for(size_t r = 0; r < height; r++)
         {
             //Set the output to 0, to start with
             output[r * width + c] = 0;
 
             //These two loops iterate over a 3x3 subwindow of the image centred on the coordinates given by r and c
-            for(int j = 1; j >= -1; j--)
+            for(ssize_t j = 1; j >= -1; j--)
             {
-                for(int i = 1; i >= -1; i--)
+                for(ssize_t i = 1; i >= -1; i--)
                 {
                     int k = c - j;
                     int l = r - i;
@@ -62,11 +62,11 @@ Image *sobel(const Image *input)
     Image *output = alloc_image(input->width, input->height);
 
     //Compute the "response energy"---this is magnitude of the vector (h->pixels[i], v->pixels[i]) for all values of i
-    for(int c = 0; c < input->width; c++)
+    for(size_t c = 0; c < input->width; c++)
     {
-        for(int r = 0; r < input->height; r++)
+        for(size_t r = 0; r < input->height; r++)
         {
-            int idx = r * input->width + c;
+            size_t idx = r * input->width + c;
 
             float hval = (float)h->pixels[idx];
             float vval = (float)v->pixels[idx];

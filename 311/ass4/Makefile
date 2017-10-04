@@ -1,13 +1,17 @@
 all: sobel orig
 
-sobel:
-	gcc src/sobel.c src/imageio.c -O3 -lm -o sobel
+sobel: src/sobel.c
+	gcc src/sobel.c src/imageio.c -O3 -Wall -pedantic -Werror -lm -o sobel
 
-orig:
+orig: src/orig.c
 	gcc src/orig.c src/imageio.c -O3 -lm -o orig
 
 test: sobel orig
 	./test.sh
+
+stat: sobel orig
+	perf stat ./orig resources/timberlea.pgm results/timberlea-edges_orig.pgm
+	perf stat ./sobel resources/timberlea.pgm results/timberlea-edges.pgm
 
 clean:
 	rm -rf results sobel orig
