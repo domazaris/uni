@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdio.h>
-
+#include <sys/types.h>
+#include <x86intrin.h>
 #include "imageio.h"
 
 //The kernel for the horizontal response
@@ -19,11 +20,11 @@ float vfilter[] = {
 
 void apply_filter(const float *input, int width, int height, const float *kernel, float *output)
 {
-    //Iterate over each column in the image
-    for(size_t c = 0; c < width; c++)
+    //Iterate over each row in the image
+    for(size_t r = 0; r < height; r++)
     {
-        //Now iterate over each row in the image
-        for(size_t r = 0; r < height; r++)
+        //Now iterate over each column in the image
+        for(size_t c = 0; c < width; c++)
         {
             //Set the output to 0, to start with
             output[r * width + c] = 0;
@@ -47,6 +48,38 @@ void apply_filter(const float *input, int width, int height, const float *kernel
     }
 }
 
+void square_rt( float* h, float* v, float* out, size_t n )
+{
+    size_t i = 0;
+    for(; i <= n - 8; i += 8 )
+    {
+        // load
+        __m256 _mh = _mm256_loadu_ps( h + i );
+        __m256 _mv = _mm256_loadu_ps( v + i );
+        
+        // square
+        __m256 _mh2 = _mm256_mul_ps( _mh, _mh );
+        __m256 _mv2 = _mm256_mul_ps( _mv, _mv );
+        
+        // add
+        __m256 _madd = _mm256_add_ps( _mh2, _mv2 );
+        
+        // sqrt
+        __m256 _sqrt = _mm256_sqrt_ps( _madd );
+        
+        // store
+        _mm256_storeu_ps( out + i, _sqrt );
+    }
+    
+    // Remaining
+    for(; i < n; i++)
+    {
+        float hval = (float)h[ i ];
+        float vval = (float)v[ i ];
+        out[ i ] = (float)sqrt(hval * hval + vval * vval);
+    }
+}
+
 Image *sobel(const Image *input)
 {
     //Allocate some temporary images for horizontal and vertical responses
@@ -62,16 +95,10 @@ Image *sobel(const Image *input)
     Image *output = alloc_image(input->width, input->height);
 
     //Compute the "response energy"---this is magnitude of the vector (h->pixels[i], v->pixels[i]) for all values of i
-    for(size_t c = 0; c < input->width; c++)
+    for(size_t r = 0; r < input->height; r++)
     {
-        for(size_t r = 0; r < input->height; r++)
-        {
-            size_t idx = r * input->width + c;
-
-            float hval = (float)h->pixels[idx];
-            float vval = (float)v->pixels[idx];
-            output->pixels[idx] = (float)sqrt(hval * hval + vval * vval);
-        }
+        size_t idx = r * input->width;
+        square_rt( h->pixels + idx, v->pixels + idx, output->pixels + idx, input->width );
     }
 
     //Free the temporary images
