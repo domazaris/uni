@@ -12,6 +12,7 @@ test: sobel orig
 stat: sobel orig
 	perf stat -ddd ./orig resources/timberlea.pgm results/timberlea-edges_orig.pgm
 	perf stat -ddd ./sobel resources/timberlea.pgm results/timberlea-edges.pgm
+	cmp    results/timberlea-edges.pgm results/timberlea-edges_orig.pgm
 
 clean:
 	rm -rf results sobel orig
