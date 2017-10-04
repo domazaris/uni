@@ -29,6 +29,7 @@ void apply_filter(const float *input, int width, int height, const float *kernel
             //Set the output to 0, to start with
             output[r * width + c] = 0;
 
+            // TODO: AVX-ify
             //These two loops iterate over a 3x3 subwindow of the image centred on the coordinates given by r and c
             for(ssize_t j = 1; j >= -1; j--)
             {
@@ -38,12 +39,37 @@ void apply_filter(const float *input, int width, int height, const float *kernel
                     int l = r - i;
 
                     //Check that we aren't going to cause a buffer overflow (or spill onto an adjacent scan line)
+                    // TODO: review this
                     if(k >= 0 && k < width && l >= 0 && l < height)
                     {
-                        output[r * width + c] += input[l * width + k] * kernel[(i + 1) * 3 + j + 1];
+                        output[r * width + c] += input[l * width + k] * kernel[( i + 1 ) * 3 + j + 1];
                     }
                 }
             }
+        }
+    }
+}
+
+void apply_fast_filter(const float *input, int width, int height, const float *kernel, float *output)
+{
+     //Iterate over each row in the image
+    for(size_t i = 0; i < height; i++)
+    {
+        //Now iterate over each column in the image
+        size_t j = 0;
+        for(; j <= width - 8; j += 8)
+        {
+            // Top L
+            // Top C
+            // Top R
+            
+            // Mid L
+            // Mid C
+            // Mid R
+            
+            // Bottom L
+            // Bottom C
+            // Bottom R
         }
     }
 }
