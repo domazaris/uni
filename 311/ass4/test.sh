@@ -1,4 +1,5 @@
 #!/bin/bash
+rm -rf results
 mkdir -p results
 
 printf "\n---- Original ----\n"

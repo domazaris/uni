@@ -8,7 +8,8 @@ Image *alloc_image(int width, int height)
     Image *img = (Image *)malloc(sizeof(Image));
     img->width = width;
     img->height = height;
-    img->pixels = malloc(width * height * sizeof(float));
+    img->pixels = (float*)aligned_alloc( 32,width * height * sizeof(float) );
+//     img->pixels = malloc(width * height * sizeof(float));
 
     return img;
 }
