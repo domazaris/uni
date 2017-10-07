@@ -56,9 +56,9 @@ void filter( float* input, float* h, float* v, size_t* r, size_t* c, ssize_t* i,
     ssize_t k = *c - *j; 
     ssize_t l = *r - *i;
     
-    size_t yo = (k >= 0 && k < *width && l >= 0 && l < *height);
-    *h += ! yo ? 0 : input[l * *width + k] * hfilter[( *i + 1 ) * 3 + *j + 1];
-    *v += ! yo ? 0 : input[l * *width + k] * vfilter[( *i + 1 ) * 3 + *j + 1];
+    size_t in_bounds = (k >= 0 && k < *width && l >= 0 && l < *height);
+    *h += ! in_bounds ? 0 : input[l * *width + k] * hfilter[( *i + 1 ) * 3 + *j + 1];
+    *v += ! in_bounds ? 0 : input[l * *width + k] * vfilter[( *i + 1 ) * 3 + *j + 1];
 }
 
 Image* sobel( const Image* input )
