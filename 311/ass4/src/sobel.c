@@ -72,14 +72,34 @@ Image* sobel( const Image* input )
     float v_val = 0;
     
     ssize_t j = 0, i = 0;
-    for(size_t r = 0; r < height; r++)
+    for(size_t r = 0; r < height; ++r )
     {
         //Now iterate over each column in the image
-        for(size_t c = 0; c < width; c++)
+        size_t c = 0;
+        for(; c < width - 8; c += 1)
         {
             h_val = 0;
             v_val = 0;
-    
+
+            j = -1, i = -1; filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
+            j = -1, i = 0;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
+            j = -1, i = 1;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
+            j = 0,  i = -1; filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
+            j = 0,  i = 0;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
+            j = 0,  i = 1;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
+            j = 1,  i = -1; filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
+            j = 1,  i = 0;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
+            j = 1,  i = 1;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
+            
+            output->pixels[ r * width + c ] = (float)sqrt( h_val * h_val + v_val * v_val);
+        }
+        
+        //Now iterate over each column in the image
+        for(; c < width; ++c )
+        {
+            h_val = 0;
+            v_val = 0;
+
             j = -1, i = -1; filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
             j = -1, i = 0;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
             j = -1, i = 1;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
