@@ -51,84 +51,44 @@ void square_rt( float* h, float* v, float* out, size_t n )
     }
 }
 
+void filter( float* input, float* h, float* v, size_t* r, size_t* c, ssize_t* i, ssize_t* j, size_t* width, size_t* height )
+{
+    ssize_t k = *c - *j; 
+    ssize_t l = *r - *i;
+    
+    size_t yo = (k >= 0 && k < *width && l >= 0 && l < *height);
+    *h += ! yo ? 0 : input[l * *width + k] * hfilter[( *i + 1 ) * 3 + *j + 1];
+    *v += ! yo ? 0 : input[l * *width + k] * vfilter[( *i + 1 ) * 3 + *j + 1];
+}
+
 Image* sobel( const Image* input )
 {
     size_t width = (size_t)input->width;
     size_t height = (size_t)input->height;
     Image* output = alloc_image(width, height);
     
-    // apply filter 1: Iterate over each row in the image
+    // Iterate over each row in the image
     float h_val = 0;
     float v_val = 0;
     
-    ssize_t j = 0, i = 0, k = 0, l = 0;
+    ssize_t j = 0, i = 0;
     for(size_t r = 0; r < height; r++)
     {
         //Now iterate over each column in the image
         for(size_t c = 0; c < width; c++)
         {
-            j = -1, i = -1; k = c - j; l = r - i;
-            if(k >= 0 && k < width && l >= 0 && l < height)
-            {
-                h_val += input->pixels[l * width + k] * hfilter[( i + 1 ) * 3 + j + 1];
-                v_val += input->pixels[l * width + k] * vfilter[( i + 1 ) * 3 + j + 1];
-            }
-            
-            j = -1, i = 0; k = c - j; l = r - i;
-            if(k >= 0 && k < width && l >= 0 && l < height)
-            {
-                h_val += input->pixels[l * width + k] * hfilter[( i + 1 ) * 3 + j + 1];
-                v_val += input->pixels[l * width + k] * vfilter[( i + 1 ) * 3 + j + 1];
-            }
-            
-            j = -1, i = 1; k = c - j; l = r - i;
-            if(k >= 0 && k < width && l >= 0 && l < height)
-            {
-                h_val += input->pixels[l * width + k] * hfilter[( i + 1 ) * 3 + j + 1];
-                v_val += input->pixels[l * width + k] * vfilter[( i + 1 ) * 3 + j + 1];
-            }
-            
-            j = 0, i = -1; k = c - j; l = r - i;
-            if(k >= 0 && k < width && l >= 0 && l < height)
-            {
-                h_val += input->pixels[l * width + k] * hfilter[( i + 1 ) * 3 + j + 1];
-                v_val += input->pixels[l * width + k] * vfilter[( i + 1 ) * 3 + j + 1];
-            }
-            
-            j = 0, i = 0; k = c - j; l = r - i;
-            if(k >= 0 && k < width && l >= 0 && l < height)
-            {
-                h_val += input->pixels[l * width + k] * hfilter[( i + 1 ) * 3 + j + 1];
-                v_val += input->pixels[l * width + k] * vfilter[( i + 1 ) * 3 + j + 1];
-            }
-            
-            j = 0, i = 1; k = c - j; l = r - i;
-            if(k >= 0 && k < width && l >= 0 && l < height)
-            {
-                h_val += input->pixels[l * width + k] * hfilter[( i + 1 ) * 3 + j + 1];
-                v_val += input->pixels[l * width + k] * vfilter[( i + 1 ) * 3 + j + 1];
-            }
-            
-            j = 1, i = -1; k = c - j; l = r - i;
-            if(k >= 0 && k < width && l >= 0 && l < height)
-            {
-                h_val += input->pixels[l * width + k] * hfilter[( i + 1 ) * 3 + j + 1];
-                v_val += input->pixels[l * width + k] * vfilter[( i + 1 ) * 3 + j + 1];
-            }
-            
-            j = 1, i = 0; k = c - j; l = r - i;
-            if(k >= 0 && k < width && l >= 0 && l < height)
-            {
-                h_val += input->pixels[l * width + k] * hfilter[( i + 1 ) * 3 + j + 1];
-                v_val += input->pixels[l * width + k] * vfilter[( i + 1 ) * 3 + j + 1];
-            }
-            
-            j = 1, i = 1; k = c - j; l = r - i;
-            if(k >= 0 && k < width && l >= 0 && l < height)
-            {
-                h_val += input->pixels[l * width + k] * hfilter[( i + 1 ) * 3 + j + 1];
-                v_val += input->pixels[l * width + k] * vfilter[( i + 1 ) * 3 + j + 1];
-            }
+            h_val = 0;
+            v_val = 0;
+    
+            j = -1, i = -1; filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
+            j = -1, i = 0;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
+            j = -1, i = 1;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
+            j = 0,  i = -1; filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
+            j = 0,  i = 0;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
+            j = 0,  i = 1;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
+            j = 1,  i = -1; filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
+            j = 1,  i = 0;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
+            j = 1,  i = 1;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
             
             output->pixels[ r * width + c ] = (float)sqrt( h_val * h_val + v_val * v_val);
         }
