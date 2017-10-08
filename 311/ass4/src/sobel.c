@@ -51,15 +51,20 @@ void square_rt( float* h, float* v, float* out, size_t n )
     }
 }
 
-void filter( float* input, float* h, float* v, size_t* r, size_t* c, ssize_t* i, ssize_t* j, size_t* width, size_t* height )
+static inline __attribute__((always_inline)) size_t in_bounds(ssize_t* k, ssize_t* l, size_t* width, size_t* height )
+{
+    return (*k >= 0 && *k < *width && *l >= 0 && *l < *height);
+}
+
+static inline __attribute__((always_inline)) void filter( float* input, float* h, float* v, size_t* r, size_t* c, ssize_t* i, ssize_t* j, size_t* width, size_t* height )
 {
     ssize_t k = *c - *j; 
     ssize_t l = *r - *i;
     
-    size_t in_bounds = (k >= 0 && k < *width && l >= 0 && l < *height);
-    *h += ! in_bounds ? 0 : input[l * *width + k] * hfilter[( *i + 1 ) * 3 + *j + 1];
-    *v += ! in_bounds ? 0 : input[l * *width + k] * vfilter[( *i + 1 ) * 3 + *j + 1];
+    *h += ! in_bounds( &k, &l, width, height ) ? 0 : input[l * *width + k] * hfilter[( *i + 1 ) * 3 + *j + 1];
+    *v += ! in_bounds( &k, &l, width, height ) ? 0 : input[l * *width + k] * vfilter[( *i + 1 ) * 3 + *j + 1];
 }
+
 
 Image* sobel( const Image* input )
 {
@@ -71,27 +76,164 @@ Image* sobel( const Image* input )
     float h_val = 0;
     float v_val = 0;
     
-    ssize_t j = 0, i = 0;
+    __m256 m_h_val;
+    __m256 m_v_val;
+    __m256 m_h_tmp;
+    __m256 m_v_tmp;
+    __m256 m_input;
+    __m256 m_out;
+    __m256* m_h_filters = (__m256*)aligned_alloc( 32, sizeof(__m256) * 9 );
+    __m256* m_v_filters = (__m256*)aligned_alloc( 32, sizeof(__m256) * 9 );
+    for( size_t i = 0; i < 9; i++ )
+    {
+        m_h_filters[i] = _mm256_set1_ps( hfilter[i] );
+        m_v_filters[i] = _mm256_set1_ps( vfilter[i] );
+    }
+    
+    ssize_t j = 0, i = 0, k = 0, l = 0;
     for(size_t r = 0; r < height; ++r )
     {
         //Now iterate over each column in the image
         size_t c = 0;
-        for(; c < width - 8; c += 1)
+        for(; c < width - 8; c += 8)
         {
-            h_val = 0;
-            v_val = 0;
+            m_h_val = _mm256_setzero_ps();
+            m_v_val = _mm256_setzero_ps();
 
-            j = -1, i = -1; filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
-            j = -1, i = 0;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
-            j = -1, i = 1;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
-            j = 0,  i = -1; filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
-            j = 0,  i = 0;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
-            j = 0,  i = 1;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
-            j = 1,  i = -1; filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
-            j = 1,  i = 0;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
-            j = 1,  i = 1;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
+            // Top
+            j = -1, i = -1, k = c - j, l = r - i;
+            if( in_bounds( &k, &l, &width, &height ) )
+            {
+                // Load input
+                m_input = _mm256_loadu_ps( &input->pixels[l * width + k] );
+                
+                // Mul
+                m_h_tmp = _mm256_mul_ps( m_input, m_h_filters[ 0 ] );
+                m_v_tmp = _mm256_mul_ps( m_input, m_v_filters[ 0 ] );;
+                
+                // Add
+                m_h_val = _mm256_add_ps( m_h_val, m_h_tmp );
+                m_v_val = _mm256_add_ps( m_v_val, m_v_tmp );
+            }
             
-            output->pixels[ r * width + c ] = (float)sqrt( h_val * h_val + v_val * v_val);
+            j = -1, i = 0, k = c - j, l = r - i;
+            if( in_bounds( &k, &l, &width, &height ) )
+            {
+                // Load input
+                m_input = _mm256_loadu_ps( &input->pixels[l * width + k] );
+                
+                // Mul
+                m_h_tmp = _mm256_mul_ps( m_input, m_h_filters[ 1 ] );
+                m_v_tmp = _mm256_mul_ps( m_input, m_v_filters[ 1 ] );;
+                
+                // Add
+                m_h_val = _mm256_add_ps( m_h_val, m_h_tmp );
+                m_v_val = _mm256_add_ps( m_v_val, m_v_tmp );
+            }
+
+            j = -1, i = 1, k = c - j, l = r - i;
+            if( in_bounds( &k, &l, &width, &height ) )
+            {
+                // Load input
+                m_input = _mm256_loadu_ps( &input->pixels[l * width + k] );
+                
+                // Mul
+                m_h_tmp = _mm256_mul_ps( m_input, m_h_filters[ 2 ] );
+                m_v_tmp = _mm256_mul_ps( m_input, m_v_filters[ 2 ] );;
+                
+                // Add
+                m_h_val = _mm256_add_ps( m_h_val, m_h_tmp );
+                m_v_val = _mm256_add_ps( m_v_val, m_v_tmp );
+            }
+
+            j = 0, i = -1, k = c - j, l = r - i;
+            if( in_bounds( &k, &l, &width, &height ) )
+            {
+                // Load input
+                m_input = _mm256_loadu_ps( &input->pixels[l * width + k] );
+                
+                // Mul
+                m_h_tmp = _mm256_mul_ps( m_input, m_h_filters[ 3 ] );
+                m_v_tmp = _mm256_mul_ps( m_input, m_v_filters[ 3 ] );;
+                
+                // Add
+                m_h_val = _mm256_add_ps( m_h_val, m_h_tmp );
+                m_v_val = _mm256_add_ps( m_v_val, m_v_tmp );
+            }
+            
+            j = 1, i = 1, k = c - j, l = r - i;
+            if( in_bounds( &k, &l, &width, &height ) )
+            {
+                // Load input
+                m_input = _mm256_loadu_ps( &input->pixels[l * width + k] );
+                
+                // Mul
+                m_h_tmp = _mm256_mul_ps( m_input, m_h_filters[ 5 ] );
+                m_v_tmp = _mm256_mul_ps( m_input, m_v_filters[ 5 ] );;
+                
+                // Add
+                m_h_val = _mm256_add_ps( m_h_val, m_h_tmp );
+                m_v_val = _mm256_add_ps( m_v_val, m_v_tmp );
+            }
+
+            j = 1, i = -1, k = c - j, l = r - i;
+            if( in_bounds( &k, &l, &width, &height ) )
+            {
+                // Load input
+                m_input = _mm256_loadu_ps( &input->pixels[l * width + k] );
+                
+                // Mul
+                m_h_tmp = _mm256_mul_ps( m_input, m_h_filters[ 6 ] );
+                m_v_tmp = _mm256_mul_ps( m_input, m_v_filters[ 6 ] );;
+                
+                // Add
+                m_h_val = _mm256_add_ps( m_h_val, m_h_tmp );
+                m_v_val = _mm256_add_ps( m_v_val, m_v_tmp );
+            }
+            
+            j = 1, i = 0, k = c - j, l = r - i;
+            if( in_bounds( &k, &l, &width, &height ) )
+            {
+                // Load input
+                m_input = _mm256_loadu_ps( &input->pixels[l * width + k] );
+                
+                // Mul
+                m_h_tmp = _mm256_mul_ps( m_input, m_h_filters[ 7 ] );
+                m_v_tmp = _mm256_mul_ps( m_input, m_v_filters[ 7 ] );;
+                
+                // Add
+                m_h_val = _mm256_add_ps( m_h_val, m_h_tmp );
+                m_v_val = _mm256_add_ps( m_v_val, m_v_tmp );
+            }
+
+            j = 1, i = 1, k = c - j, l = r - i;
+            if( in_bounds( &k, &l, &width, &height ) )
+            {
+                // Load input
+                m_input = _mm256_loadu_ps( &input->pixels[l * width + k] );
+                
+                // Mul
+                m_h_tmp = _mm256_mul_ps( m_input, m_h_filters[ 8 ] );
+                m_v_tmp = _mm256_mul_ps( m_input, m_v_filters[ 8 ] );;
+                
+                // Add
+                m_h_val = _mm256_add_ps( m_h_val, m_h_tmp );
+                m_v_val = _mm256_add_ps( m_v_val, m_v_tmp );
+            }
+            
+            // "Response Energy" //
+            // square
+            m_h_val = _mm256_mul_ps( m_h_val, m_h_val );
+            m_v_val = _mm256_mul_ps( m_v_val, m_v_val );
+            
+            // add
+            m_out = _mm256_add_ps( m_h_val, m_v_val );
+            
+            // sqrt
+            m_out = _mm256_sqrt_ps( m_out );
+            
+            // store
+            _mm256_storeu_ps( &output->pixels[ r * width + c ] + i, m_out );
         }
         
         //Now iterate over each column in the image
@@ -114,6 +256,8 @@ Image* sobel( const Image* input )
         }
     }
     
+    free(m_h_filters);
+    free(m_v_filters);
     return output;
 }
 
