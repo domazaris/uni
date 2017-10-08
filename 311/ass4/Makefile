@@ -16,4 +16,4 @@ stat: sobel orig
 	cmp results/timberlea-edges.pgm results/timberlea-edges_orig.pgm
 
 clean:
-	rm -rf results bin
+	rm -rf bin
