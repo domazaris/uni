@@ -109,7 +109,7 @@ Image* sobel( const Image* input )
         ++c;
         
         //Now iterate over each column in the image, using avx to do 8 at a time
-        for(; c < width - 8; c += 8)
+        for(; c < width; c += 8)
         {
             m_h_val = _mm256_setzero_ps();
             m_v_val = _mm256_setzero_ps();
@@ -154,7 +154,7 @@ Image* sobel( const Image* input )
             _mm256_storeu_ps( &output->pixels[ r * width + c ], m_out );
         }
         
-        //Now iterate over the remaining ( < 8 ) columns
+        //Now iterate over any remaining ( < 8 ) columns
         for(; c < width; ++c )
         {
             full_filter( input->pixels, output->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
