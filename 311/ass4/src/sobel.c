@@ -58,14 +58,15 @@ static inline __attribute__((always_inline)) size_t in_bounds(ssize_t* k, ssize_
 
 static inline __attribute__((always_inline)) void filter( float* input, float* h, float* v, size_t* r, size_t* c, ssize_t* i, ssize_t* j, size_t* width, size_t* height )
 {
-    ssize_t k = *c - *j; 
+    ssize_t k = *c - *j;
     ssize_t l = *r - *i;
     
     *h += ! in_bounds( &k, &l, width, height ) ? 0 : input[l * *width + k] * hfilter[( *i + 1 ) * 3 + *j + 1];
     *v += ! in_bounds( &k, &l, width, height ) ? 0 : input[l * *width + k] * vfilter[( *i + 1 ) * 3 + *j + 1];
 }
 
-void fast_filter8( float* input, __m256* m_input, __m256* h_val, __m256* v_val, ssize_t* k, ssize_t* l, size_t* width, size_t* height, __m256* h_tmp, __m256* v_tmp,__m256* h_filter, __m256* v_filter )
+void fast_filter8( float* input, __m256* m_input, __m256* h_val, __m256* v_val, ssize_t* k, ssize_t* l, size_t* width, 
+                   size_t* height, __m256* h_tmp, __m256* v_tmp,__m256* h_filter, __m256* v_filter )
 {
     if( in_bounds( k, l, width, height ) )
     {
@@ -129,7 +130,7 @@ Image* sobel( const Image* input )
             j = 0, i = -1, k = c - j, l = r - i;
             fast_filter8( input->pixels, &m_input, &m_h_val, &m_v_val, &k, &l, &width, &height, &m_h_tmp, &m_v_tmp, &m_h_filters[3], &m_v_filters[3] );
             
-            j = 1, i = 1, k = c - j, l = r - i;
+            j = 0, i = 1, k = c - j, l = r - i;
             fast_filter8( input->pixels, &m_input, &m_h_val, &m_v_val, &k, &l, &width, &height, &m_h_tmp, &m_v_tmp, &m_h_filters[5], &m_v_filters[5] );
 
             j = 1, i = -1, k = c - j, l = r - i;
@@ -153,7 +154,7 @@ Image* sobel( const Image* input )
             m_out = _mm256_sqrt_ps( m_out );
             
             // store
-            _mm256_storeu_ps( &output->pixels[ r * width + c ] + i, m_out );
+            _mm256_storeu_ps( &output->pixels[ r * width + c ], m_out );
         }
         
         //Now iterate over each column in the image
@@ -166,7 +167,6 @@ Image* sobel( const Image* input )
             j = -1, i = 0;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
             j = -1, i = 1;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
             j = 0,  i = -1; filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
-            j = 0,  i = 0;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
             j = 0,  i = 1;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
             j = 1,  i = -1; filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
             j = 1,  i = 0;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );

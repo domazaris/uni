@@ -1,9 +1,9 @@
 ## COMP311-17B Assignment 4
-#### Dominic Azaris - 1297845 - djmha1
+### Dominic Azaris - 1297845 - djmha1
 
 ---
 
-### Usage:
+## Usage:
 #### Compile
 ```
 make
@@ -14,7 +14,7 @@ make
 make test
 ```
 
-### Optimisations
+## Optimisations
 
 #### AVX
 Replace most of the computaion with AVX (simd) so that it can run more instructions per cycle
