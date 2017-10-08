@@ -20,4 +20,5 @@ printf "Got $SPEED_UP times speed up\n"
 
 printf "\n---- Comparison ----\n\n"
 md5sum results/timberlea-edges.pgm results/timberlea-edges_orig.pgm
+printf "\n"
 cmp    results/timberlea-edges.pgm results/timberlea-edges_orig.pgm
