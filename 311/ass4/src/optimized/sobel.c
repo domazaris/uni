@@ -33,6 +33,22 @@ static inline __attribute__((always_inline)) void filter( float* input, float* h
     *v += ! in_bounds( &k, &l, width, height ) ? 0 : input[l * *width + k] * vfilter[( *i + 1 ) * 3 + *j + 1];
 }
 
+static inline __attribute__((always_inline)) void full_filter( float* input, float* output, float* h, float* v, size_t* r, size_t* c, ssize_t* i, ssize_t* j, size_t* width, size_t* height )
+{
+    *h = 0;
+    *v = 0;
+
+    *j = -1, *i = -1; filter( input, h, v, r, c, i, j, width, height );
+    *j = -1, *i = 0;  filter( input, h, v, r, c, i, j, width, height );
+    *j = -1, *i = 1;  filter( input, h, v, r, c, i, j, width, height );
+    *j = 0,  *i = -1; filter( input, h, v, r, c, i, j, width, height );
+    *j = 0,  *i = 1;  filter( input, h, v, r, c, i, j, width, height );
+    *j = 1,  *i = -1; filter( input, h, v, r, c, i, j, width, height );
+    *j = 1,  *i = 0;  filter( input, h, v, r, c, i, j, width, height );
+    *j = 1,  *i = 1;  filter( input, h, v, r, c, i, j, width, height );
+    output[ *r * *width + *c ] = (float)sqrt( *h * *h + *v * *v);
+}
+
 void fast_filter8( float* input, __m256* m_input, __m256* h_val, __m256* v_val, ssize_t* k, ssize_t* l, size_t* width, 
                    size_t* height, __m256* h_tmp, __m256* v_tmp,__m256* h_filter, __m256* v_filter )
 {
@@ -78,8 +94,12 @@ Image* sobel( const Image* input )
     ssize_t j = 0, i = 0, k = 0, l = 0;
     for(size_t r = 0; r < height; ++r )
     {
-        //Now iterate over each column in the image
         size_t c = 0;
+        // Apply first column sequentialls for edge case
+        full_filter( input->pixels, output->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
+        ++c;
+        
+        //Now iterate over each column in the image
         for(; c < width - 8; c += 8)
         {
             m_h_val = _mm256_setzero_ps();
@@ -125,22 +145,10 @@ Image* sobel( const Image* input )
             _mm256_storeu_ps( &output->pixels[ r * width + c ], m_out );
         }
         
-        //Now iterate over each column in the image
+        //Now iterate over the remaining ( < 8 ) columns
         for(; c < width; ++c )
         {
-            h_val = 0;
-            v_val = 0;
-
-            j = -1, i = -1; filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
-            j = -1, i = 0;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
-            j = -1, i = 1;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
-            j = 0,  i = -1; filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
-            j = 0,  i = 1;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
-            j = 1,  i = -1; filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
-            j = 1,  i = 0;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
-            j = 1,  i = 1;  filter( input->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
-            
-            output->pixels[ r * width + c ] = (float)sqrt( h_val * h_val + v_val * v_val);
+            full_filter( input->pixels, output->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
         }
     }
     
