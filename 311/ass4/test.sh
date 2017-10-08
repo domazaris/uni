@@ -3,10 +3,10 @@ rm -rf results
 mkdir -p results
 
 printf "\n---- Original ----\n"
-time ./orig  resources/timberlea.pgm results/timberlea-edges_orig.pgm
+time ./bin/original resources/timberlea.pgm results/timberlea-edges_orig.pgm
 
 printf "\n---- Optimized ----\n"
-time ./sobel resources/timberlea.pgm results/timberlea-edges.pgm
+time ./bin/sobel resources/timberlea.pgm results/timberlea-edges.pgm
 
 printf "\n---- Comparison ----\n\n"
 md5sum results/timberlea-edges.pgm results/timberlea-edges_orig.pgm
