@@ -1,9 +1,9 @@
 all: sobel orig
 
-sobel: src/sobel.c
+sobel: src/sobel.c src/imageio.c src/imageio.h
 	gcc src/sobel.c src/imageio.c -mavx -O3 -Wall -pedantic -Werror -g -lm -o sobel
 
-orig: src/orig.c
+orig: src/orig.c src/imageio.c src/imageio.h
 	gcc src/orig.c src/imageio.c -O3 -lm -o orig
 
 test: sobel orig
