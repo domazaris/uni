@@ -65,6 +65,22 @@ static inline __attribute__((always_inline)) void filter( float* input, float* h
     *v += ! in_bounds( &k, &l, width, height ) ? 0 : input[l * *width + k] * vfilter[( *i + 1 ) * 3 + *j + 1];
 }
 
+void fast_filter8( float* input, __m256* m_input, __m256* h_val, __m256* v_val, ssize_t* k, ssize_t* l, size_t* width, size_t* height, __m256* h_tmp, __m256* v_tmp,__m256* h_filter, __m256* v_filter )
+{
+    if( in_bounds( k, l, width, height ) )
+    {
+        // Load input
+        *m_input = _mm256_loadu_ps( &input[*l * *width + *k] );
+        
+        // Mul
+        *h_tmp = _mm256_mul_ps( *m_input, *h_filter );
+        *v_tmp = _mm256_mul_ps( *m_input, *v_filter );;
+        
+        // Add
+        *h_val = _mm256_add_ps( *h_val, *h_tmp );
+        *v_val = _mm256_add_ps( *v_val, *v_tmp );
+    }
+}
 
 Image* sobel( const Image* input )
 {
@@ -102,124 +118,28 @@ Image* sobel( const Image* input )
 
             // Top
             j = -1, i = -1, k = c - j, l = r - i;
-            if( in_bounds( &k, &l, &width, &height ) )
-            {
-                // Load input
-                m_input = _mm256_loadu_ps( &input->pixels[l * width + k] );
-                
-                // Mul
-                m_h_tmp = _mm256_mul_ps( m_input, m_h_filters[ 0 ] );
-                m_v_tmp = _mm256_mul_ps( m_input, m_v_filters[ 0 ] );;
-                
-                // Add
-                m_h_val = _mm256_add_ps( m_h_val, m_h_tmp );
-                m_v_val = _mm256_add_ps( m_v_val, m_v_tmp );
-            }
+            fast_filter8( input->pixels, &m_input, &m_h_val, &m_v_val, &k, &l, &width, &height, &m_h_tmp, &m_v_tmp, &m_h_filters[0], &m_v_filters[0] );
             
             j = -1, i = 0, k = c - j, l = r - i;
-            if( in_bounds( &k, &l, &width, &height ) )
-            {
-                // Load input
-                m_input = _mm256_loadu_ps( &input->pixels[l * width + k] );
-                
-                // Mul
-                m_h_tmp = _mm256_mul_ps( m_input, m_h_filters[ 1 ] );
-                m_v_tmp = _mm256_mul_ps( m_input, m_v_filters[ 1 ] );;
-                
-                // Add
-                m_h_val = _mm256_add_ps( m_h_val, m_h_tmp );
-                m_v_val = _mm256_add_ps( m_v_val, m_v_tmp );
-            }
+            fast_filter8( input->pixels, &m_input, &m_h_val, &m_v_val, &k, &l, &width, &height, &m_h_tmp, &m_v_tmp, &m_h_filters[1], &m_v_filters[1] );
 
             j = -1, i = 1, k = c - j, l = r - i;
-            if( in_bounds( &k, &l, &width, &height ) )
-            {
-                // Load input
-                m_input = _mm256_loadu_ps( &input->pixels[l * width + k] );
-                
-                // Mul
-                m_h_tmp = _mm256_mul_ps( m_input, m_h_filters[ 2 ] );
-                m_v_tmp = _mm256_mul_ps( m_input, m_v_filters[ 2 ] );;
-                
-                // Add
-                m_h_val = _mm256_add_ps( m_h_val, m_h_tmp );
-                m_v_val = _mm256_add_ps( m_v_val, m_v_tmp );
-            }
+            fast_filter8( input->pixels, &m_input, &m_h_val, &m_v_val, &k, &l, &width, &height, &m_h_tmp, &m_v_tmp, &m_h_filters[2], &m_v_filters[2] );
 
             j = 0, i = -1, k = c - j, l = r - i;
-            if( in_bounds( &k, &l, &width, &height ) )
-            {
-                // Load input
-                m_input = _mm256_loadu_ps( &input->pixels[l * width + k] );
-                
-                // Mul
-                m_h_tmp = _mm256_mul_ps( m_input, m_h_filters[ 3 ] );
-                m_v_tmp = _mm256_mul_ps( m_input, m_v_filters[ 3 ] );;
-                
-                // Add
-                m_h_val = _mm256_add_ps( m_h_val, m_h_tmp );
-                m_v_val = _mm256_add_ps( m_v_val, m_v_tmp );
-            }
+            fast_filter8( input->pixels, &m_input, &m_h_val, &m_v_val, &k, &l, &width, &height, &m_h_tmp, &m_v_tmp, &m_h_filters[3], &m_v_filters[3] );
             
             j = 1, i = 1, k = c - j, l = r - i;
-            if( in_bounds( &k, &l, &width, &height ) )
-            {
-                // Load input
-                m_input = _mm256_loadu_ps( &input->pixels[l * width + k] );
-                
-                // Mul
-                m_h_tmp = _mm256_mul_ps( m_input, m_h_filters[ 5 ] );
-                m_v_tmp = _mm256_mul_ps( m_input, m_v_filters[ 5 ] );;
-                
-                // Add
-                m_h_val = _mm256_add_ps( m_h_val, m_h_tmp );
-                m_v_val = _mm256_add_ps( m_v_val, m_v_tmp );
-            }
+            fast_filter8( input->pixels, &m_input, &m_h_val, &m_v_val, &k, &l, &width, &height, &m_h_tmp, &m_v_tmp, &m_h_filters[5], &m_v_filters[5] );
 
             j = 1, i = -1, k = c - j, l = r - i;
-            if( in_bounds( &k, &l, &width, &height ) )
-            {
-                // Load input
-                m_input = _mm256_loadu_ps( &input->pixels[l * width + k] );
-                
-                // Mul
-                m_h_tmp = _mm256_mul_ps( m_input, m_h_filters[ 6 ] );
-                m_v_tmp = _mm256_mul_ps( m_input, m_v_filters[ 6 ] );;
-                
-                // Add
-                m_h_val = _mm256_add_ps( m_h_val, m_h_tmp );
-                m_v_val = _mm256_add_ps( m_v_val, m_v_tmp );
-            }
-            
+            fast_filter8( input->pixels, &m_input, &m_h_val, &m_v_val, &k, &l, &width, &height, &m_h_tmp, &m_v_tmp, &m_h_filters[6], &m_v_filters[6] );
+
             j = 1, i = 0, k = c - j, l = r - i;
-            if( in_bounds( &k, &l, &width, &height ) )
-            {
-                // Load input
-                m_input = _mm256_loadu_ps( &input->pixels[l * width + k] );
-                
-                // Mul
-                m_h_tmp = _mm256_mul_ps( m_input, m_h_filters[ 7 ] );
-                m_v_tmp = _mm256_mul_ps( m_input, m_v_filters[ 7 ] );;
-                
-                // Add
-                m_h_val = _mm256_add_ps( m_h_val, m_h_tmp );
-                m_v_val = _mm256_add_ps( m_v_val, m_v_tmp );
-            }
+            fast_filter8( input->pixels, &m_input, &m_h_val, &m_v_val, &k, &l, &width, &height, &m_h_tmp, &m_v_tmp, &m_h_filters[7], &m_v_filters[7] );
 
             j = 1, i = 1, k = c - j, l = r - i;
-            if( in_bounds( &k, &l, &width, &height ) )
-            {
-                // Load input
-                m_input = _mm256_loadu_ps( &input->pixels[l * width + k] );
-                
-                // Mul
-                m_h_tmp = _mm256_mul_ps( m_input, m_h_filters[ 8 ] );
-                m_v_tmp = _mm256_mul_ps( m_input, m_v_filters[ 8 ] );;
-                
-                // Add
-                m_h_val = _mm256_add_ps( m_h_val, m_h_tmp );
-                m_v_val = _mm256_add_ps( m_v_val, m_v_tmp );
-            }
+            fast_filter8( input->pixels, &m_input, &m_h_val, &m_v_val, &k, &l, &width, &height, &m_h_tmp, &m_v_tmp, &m_h_filters[8], &m_v_filters[8] );
             
             // "Response Energy" //
             // square
