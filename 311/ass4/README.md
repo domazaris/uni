@@ -17,13 +17,15 @@ make test
 ## Optimisations
 
 #### AVX
-Replace most of the computaion with AVX (simd) so that it can run more instructions per cycle
+Replace most of the computaion with AVX (simd) so that it can run more instructions per cycle. I managed to change 
+both the filters and energy response to all use avx instructions.
 
 #### Iteration
-Remove 2 redundant iterations of the image to leave just one.
+The original filter iterates over the image three times. I have reduced it to iterate only once.
 
 #### Memory Allocation
-Only allocate one output image and no intermediate
+Only allocate one output image and no intermediate images. This saves on both memory consumption and allows
+more relevant data to be stored in the CPU caches.
 
 #### Variable sizes
-int to size_t/ssize_t
+Changed any int to size_t/ssize_t so that the cpu does not have to fill in the empty space in the reg.
