@@ -204,6 +204,7 @@ int main(int argc, char **argv)
 
     //Save the image!
     save_image(argv[2], output);
-    
+    free_image( img );
+    free_image( output );
     return 0;
 }
