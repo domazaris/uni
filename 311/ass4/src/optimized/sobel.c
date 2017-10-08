@@ -21,20 +21,22 @@ float vfilter[] = {
 
 static inline __attribute__((always_inline)) size_t in_bounds(ssize_t* k, ssize_t* l, size_t* width, size_t* height )
 {
+    // Check for the image edges and return
     return (*k >= 0 && *k < *width && *l >= 0 && *l < *height);
 }
 
 static inline __attribute__((always_inline)) void filter( float* input, float* h, float* v, size_t* r, size_t* c, ssize_t* i, ssize_t* j, size_t* width, size_t* height )
 {
+    // Filter  the given value
     ssize_t k = *c - *j;
     ssize_t l = *r - *i;
-    
     *h += ! in_bounds( &k, &l, width, height ) ? 0 : input[l * *width + k] * hfilter[( *i + 1 ) * 3 + *j + 1];
     *v += ! in_bounds( &k, &l, width, height ) ? 0 : input[l * *width + k] * vfilter[( *i + 1 ) * 3 + *j + 1];
 }
 
 static inline __attribute__((always_inline)) void full_filter( float* input, float* output, float* h, float* v, size_t* r, size_t* c, ssize_t* i, ssize_t* j, size_t* width, size_t* height )
 {
+    // Runs the filter over the entire 3x3 (not including the middle)
     *h = 0;
     *v = 0;
 
@@ -46,12 +48,15 @@ static inline __attribute__((always_inline)) void full_filter( float* input, flo
     *j = 1,  *i = -1; filter( input, h, v, r, c, i, j, width, height );
     *j = 1,  *i = 0;  filter( input, h, v, r, c, i, j, width, height );
     *j = 1,  *i = 1;  filter( input, h, v, r, c, i, j, width, height );
+    
+    // Energy response
     output[ *r * *width + *c ] = (float)sqrt( *h * *h + *v * *v);
 }
 
 void fast_filter8( float* input, __m256* m_input, __m256* h_val, __m256* v_val, ssize_t* k, ssize_t* l, size_t* width, 
                    size_t* height, __m256* h_tmp, __m256* v_tmp,__m256* h_filter, __m256* v_filter )
 {
+    // If not image edge, apply the filter to the given input register
     if( in_bounds( k, l, width, height ) )
     {
         // Load input
@@ -77,12 +82,15 @@ Image* sobel( const Image* input )
     float h_val = 0;
     float v_val = 0;
     
+    // Declare all values first
     __m256 m_h_val;
     __m256 m_v_val;
     __m256 m_h_tmp;
     __m256 m_v_tmp;
     __m256 m_input;
     __m256 m_out;
+    
+    // Pre-Load h & v filters into registers
     __m256* m_h_filters = (__m256*)aligned_alloc( 32, sizeof(__m256) * 9 );
     __m256* m_v_filters = (__m256*)aligned_alloc( 32, sizeof(__m256) * 9 );
     for( size_t i = 0; i < 9; i++ )
@@ -91,15 +99,16 @@ Image* sobel( const Image* input )
         m_v_filters[i] = _mm256_set1_ps( vfilter[i] );
     }
     
+    // For each row
     ssize_t j = 0, i = 0, k = 0, l = 0;
     for(size_t r = 0; r < height; ++r )
     {
         size_t c = 0;
-        // Apply first column sequentialls for edge case
+        // Apply first column sequentially for edge case
         full_filter( input->pixels, output->pixels, &h_val, &v_val, &r, &c, &i, &j, &width, &height );
         ++c;
         
-        //Now iterate over each column in the image
+        //Now iterate over each column in the image, using avx to do 8 at a time
         for(; c < width - 8; c += 8)
         {
             m_h_val = _mm256_setzero_ps();
