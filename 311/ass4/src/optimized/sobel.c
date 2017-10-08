@@ -19,38 +19,6 @@ float vfilter[] = {
     -1.0f, -2.0f, -1.0f
 };
 
-void square_rt( float* h, float* v, float* out, size_t n )
-{
-    size_t i = 0;
-    for(; i <= n - 8; i += 8 )
-    {
-        // load
-        __m256 _mh = _mm256_loadu_ps( h + i );
-        __m256 _mv = _mm256_loadu_ps( v + i );
-        
-        // square
-        __m256 _mh2 = _mm256_mul_ps( _mh, _mh );
-        __m256 _mv2 = _mm256_mul_ps( _mv, _mv );
-        
-        // add
-        __m256 _madd = _mm256_add_ps( _mh2, _mv2 );
-        
-        // sqrt
-        __m256 _sqrt = _mm256_sqrt_ps( _madd );
-        
-        // store
-        _mm256_storeu_ps( out + i, _sqrt );
-    }
-    
-    // Remaining
-    for(; i < n; i++)
-    {
-        float hval = (float)h[ i ];
-        float vval = (float)v[ i ];
-        out[ i ] = (float)sqrt(hval * hval + vval * vval);
-    }
-}
-
 static inline __attribute__((always_inline)) size_t in_bounds(ssize_t* k, ssize_t* l, size_t* width, size_t* height )
 {
     return (*k >= 0 && *k < *width && *l >= 0 && *l < *height);
