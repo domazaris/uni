@@ -11,6 +11,8 @@ make
 
 #### Run comparison with original vs optimised
 ```
+mkdir resources
+cp <file location>/timberlea.pgm resources/
 make test
 ```
 
