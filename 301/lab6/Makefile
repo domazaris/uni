@@ -16,4 +16,4 @@ test: fwatcher qcreate qdelete qread
 	./test.sh
 
 clean:
-	rm -rf fwatcher qdelete qcreate
+	rm -rf fwatcher qdelete qcreate qread
