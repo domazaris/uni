@@ -1,4 +1,4 @@
-all: fwatcher qcreate qdelete
+all: fwatcher qcreate qdelete qread
 
 fwatcher: fwatcher.c
 	gcc fwatcher.c -Wall -pedantic -Werror -o fwatcher
@@ -9,7 +9,10 @@ qcreate: qcreate.c
 qdelete: qdelete.c
 	gcc qdelete.c -lrt -Wall -pedantic -Werror -o qdelete
 
-test: fwatcher qcreate qdelete
+qread: qread.c
+	gcc qread.c -lrt -Wall -pedantic -Werror -o qread
+
+test: fwatcher qcreate qdelete qread
 	./test.sh
 
 clean:
