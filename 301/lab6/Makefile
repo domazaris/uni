@@ -1,7 +1,7 @@
 all: fwatcher qcreate qdelete qread
 
 fwatcher: fwatcher.c
-	gcc fwatcher.c -Wall -pedantic -Werror -o fwatcher
+	gcc fwatcher.c -lrt -Wall -pedantic -Werror -o fwatcher
 
 qcreate: qcreate.c
 	gcc qcreate.c -lrt -Wall -pedantic -Werror -o qcreate

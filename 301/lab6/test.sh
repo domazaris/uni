@@ -1,5 +1,5 @@
 #! /bin/bash
-# set -x
+set -x
 echo "Hello World" > /tmp/file1.txt
 echo "Hello Mar" > /tmp/file2.txt
 ./qcreate /myqueue
